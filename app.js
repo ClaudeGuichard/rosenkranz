@@ -143,7 +143,26 @@
     var root = INST.__root;
     renderComponent(REG[root.__name], root, frag, '__root', used);
     for (var k in INST) if (k !== '__root' && !used[k]) delete INST[k];
+    // Scrollstände eigener Scrollbereiche merken (z. B. Hinweisfenster, Einstellungen),
+    // damit ein Neuzeichnen sie nicht auf null zurücksetzt
+    var kept = [];
+    (function walk(el, path) {
+      for (var i = 0; i < el.children.length; i++) {
+        var ch = el.children[i], pth = path + '/' + i + ch.localName;
+        if (ch.scrollTop > 0 || ch.scrollLeft > 0) kept.push([pth, ch.scrollTop, ch.scrollLeft]);
+        walk(ch, pth);
+      }
+    })(rootHost, '');
     rootHost.replaceChildren(frag);
+    kept.forEach(function (k) {
+      var parts = k[0].split('/').slice(1), el = rootHost;
+      for (var i = 0; i < parts.length && el; i++) {
+        var idx = parseInt(parts[i], 10), tag = parts[i].replace(/^\d+/, '');
+        el = el.children[idx];
+        if (el && el.localName !== tag) el = null;
+      }
+      if (el) { el.scrollTop = k[1]; el.scrollLeft = k[2]; }
+    });
   }
 
   window.DC = {
@@ -685,16 +704,17 @@ var BIBEL = {
  gloriosa: ['Lk 24,1-12', 'Apg 1,6-11', 'Apg 2,1-13', 'Lk 1,46-55 · 1 Kor 15,20-26', 'Offb 12,1-6']
 };
 // Weitere Schriftstellen nach prayinglatin.com (Psalmen und Hoheslied auf die Zählung der Einheitsübersetzung umgerechnet,
-// Sir und Jdt in Vulgata-Zählung belassen); für die lichtreichen Geheimnisse nennt die Seite keine Stellen
+// Sir und Jdt in Vulgata-Zählung belassen). Stellen, die schon in der Hauptstelle stehen, sind entfernt.
+// Lichtreiche: Stellen aus Rosarium Virginis Mariae 21, auf der Startseite nur als Gesamtverweis genannt
 var BIBEL_MORE = {
- gaudiosa: ['Mt 1,18; Lk 1,26-38', 'Lk 1,39', 'Lk 2,6-19; 1 Kor 15,45-48', 'Lk 2,21-39', 'Lk 2,41-51'],
+ gaudiosa: ['Mt 1,18', '', '1 Kor 15,45-48', 'Lk 2,21', ''],
  luminosa: ['2 Kor 5,21; Mt 3,17 par.', 'Joh 2,1-12', 'Mk 1,15; Mk 2,3-13; Lk 7,47-48; Joh 20,22-23', 'Lk 9,35 par.', 'Joh 13,1'],
- dolorosa: ['Mt 26,36-57; Mk 14,32-52; Lk 22,39-54; Joh 18,1-12', 'Mt 27,26; Mk 15,6-15; Joh 19,1; Weish 2,12-20; Jes 50,6; 53,5',
-   'Mt 27,22-31; Mk 15,17-20; Joh 19,2-8; Jes 63,2', 'Mt 27,32-33; Mk 15,20-22; Lk 9,22-26; 14,27; 23,26-31; Joh 19,16-22',
-   'Mt 27,33-53; 24,13; Mk 15,24-40; Lk 23,32-49; 6,27-35; Joh 19,23-30; 14,6; 10,17; Ps 22,2.9-19'],
- gloriosa: ['Mt 27,62-65; 28,1-10; Mk 16,1-16; Lk 24,1-35; Joh 20,1-31', 'Mk 16,19; Lk 24,46-53; Apg 1,5-11; Röm 8,34',
-   'Apg 1,13-2,42; Hebr 3,7-8; 1 Kor 2,12-15; Röm 8,7-13', 'Hld 2,10; 6,9; Ps 16,10; 45,10-12.14; 132,8',
-   'Offb 11,19-12,1; Sir 24,23-31 (Vg); Jdt 16,10; 13,22-23 (Vg); Hld 6,10']
+ dolorosa: ['Mt 26,47-57; Mk 14,32-52; Lk 22,39-54; Joh 18,1-12', 'Mt 27,26; Joh 19,1; Weish 2,12-20; Jes 50,6; 53,5',
+   'Mk 15,17-20; Joh 19,2-8; Jes 63,2', 'Mt 27,32-33; Mk 15,20-22; Lk 9,22-26; 14,27; Joh 19,16-22',
+   'Mt 27,33-53; 24,13; Mk 15,24-40; Lk 6,27-35; Joh 19,23-30; 14,6; 10,17; Ps 22,2.9-19'],
+ gloriosa: ['Mt 27,62-65; 28,1-10; Mk 16,1-16; Lk 24,13-35; Joh 20,1-31', 'Mk 16,19; Lk 24,46-53; Röm 8,34',
+   'Apg 1,13-14; 2,14-42; Hebr 3,7-8; 1 Kor 2,12-15; Röm 8,7-13', 'Hld 2,10; 6,9; Ps 16,10; 45,10-12.14; 132,8',
+   'Offb 11,19; Sir 24,23-31 (Vg); Jdt 16,10; 13,22-23 (Vg); Hld 6,10']
 };
 var MYST_STRESS = {
  gaudiosa: ['Annuntiátio', 'Visitátio', 'Natívitas', 'Praesentátio', 'Invéntio in Témplo'],
