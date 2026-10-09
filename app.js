@@ -534,6 +534,31 @@ class Component extends DCLogic {
 return Component;
 })(), ["hideText"]);
 DC.register('Main', 'tpl-Main', (function () {
+var RK_NAV = window.RK_NAV = {
+  main: null,
+  pushed: false,
+  go: function (name) {
+    if (location.hash === '#' + name) return;
+    try { history.pushState({ rk: name }, '', '#' + name); this.pushed = true; } catch (e) {}
+  },
+  leave: function (name) {
+    if (location.hash !== '#' + name) return;
+    if (this.pushed) { this.pushed = false; history.back(); }
+    else { try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {} }
+  },
+  sync: function () {
+    var m = this.main; if (!m) return;
+    var h = location.hash, S = m.state || {};
+    var wantPrayer = h === '#gebet', wantCal = h === '#kalender';
+    if (!wantPrayer && !wantCal) this.pushed = false;
+    var u = {};
+    if (!!S.prayer !== wantPrayer) u.prayer = wantPrayer;
+    if (!!S.calOpen !== wantCal) { u.calOpen = wantCal; if (wantCal) u.calMonth = new Date().getMonth(); }
+    if (Object.keys(u).length) { try { window.scrollTo(0, 0); } catch (e) {} m.setState(u); }
+  }
+};
+window.addEventListener('popstate', function () { RK_NAV.sync(); });
+window.addEventListener('hashchange', function () { RK_NAV.sync(); });
 function autoSeason(date) {
   var d = new Date(date.getFullYear(), date.getMonth(), date.getDate());
   var y = d.getFullYear();
@@ -544,6 +569,14 @@ function autoSeason(date) {
   if (d >= easter && d <= pent) return 'osterzeit';
   return 'jahreskreis';
 }
+var RK_ENV = (function () {
+  var ua = (navigator && navigator.userAgent) || '';
+  var ios = /iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
+  var android = /Android/.test(ua);
+  var sa = false;
+  try { sa = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true; } catch (e) {}
+  return { standalone: sa, showIOS: ios || !android, showAndroid: android || !ios };
+})();
 
 var SAINTS = {"reg":{"01-01":[["H","Hochfest der Gottesmutter Maria"]],"01-02":[["G","Hl. Basilius der Große und hl. Gregor von Nazianz"]],"01-03":[["g","Heiligster Name Jesu"]],"01-05":[["g","Hl. Johannes Nepomuk Neumann"]],"01-06":[["H","Erscheinung des Herrn"]],"01-07":[["g","Hl. Valentin von Rätien"],["g","Hl. Raimund von Peñafort"]],"01-08":[["g","Hl. Severin von Noricum"]],"01-13":[["g","Hl. Hilarius von Poitiers"]],"01-17":[["G","Hl. Antonius der Große"]],"01-20":[["g","Hl. Fabian"],["g","Hl. Sebastian"]],"01-21":[["G","Hl. Agnes"],["g","Hl. Meinrad"]],"01-22":[["g","Hl. Vinzenz von Saragossa"]],"01-23":[["g","Sel. Heinrich Seuse"]],"01-24":[["G","Hl. Franz von Sales"]],"01-25":[["F","Bekehrung des hl. Apostels Paulus"]],"01-26":[["G","Hl. Timotheus und hl. Titus"]],"01-27":[["g","Hl. Angela Merici"]],"01-28":[["G","Hl. Thomas von Aquin"]],"01-31":[["G","Hl. Johannes Bosco"]],"02-02":[["F","Darstellung des Herrn"]],"02-03":[["g","Hl. Blasius"],["g","Hl. Ansgar"]],"02-04":[["g","Hl. Rabanus Maurus"]],"02-05":[["G","Hl. Agatha"]],"02-06":[["G","Hl. Paul Miki und Gefährten"]],"02-08":[["g","Hl. Hieronymus Ämiliani"],["g","Hl. Josefine Bakhita"]],"02-10":[["G","Hl. Scholastika"]],"02-11":[["g","Gedenktag Unserer Lieben Frau in Lourdes"]],"02-14":[["F","Hl. Cyrill und hl. Methodius"]],"02-17":[["g","Hll. Sieben Gründer des Servitenordens"]],"02-21":[["g","Hl. Petrus Damiani"]],"02-22":[["F","Kathedra Petri"]],"02-23":[["G","Hl. Polykarp"]],"02-24":[["F","Hl. Matthias, Apostel"]],"02-25":[["g","Hl. Walburga"]],"02-27":[["g","Hl. Gregor von Narek"]],"03-04":[["g","Hl. Kasimir"]],"03-06":[["g","Hl. Fridolin von Säckingen"]],"03-07":[["G","Hl. Perpetua und hl. Felizitas"]],"03-08":[["g","Hl. Johannes von Gott"]],"03-09":[["g","Hl. Bruno von Querfurt"],["g","Hl. Franziska von Rom"]],"03-14":[["g","Hl. Mathilde"]],"03-15":[["g","Hl. Klemens Maria Hofbauer"]],"03-17":[["g","Hl. Gertrud von Nivelles"],["g","Hl. Patrick"]],"03-18":[["g","Hl. Cyrill von Jerusalem"]],"03-19":[["H","Hl. Josef, Bräutigam der Gottesmutter"]],"03-23":[["g","Hl. Turibio von Mongrovejo"]],"03-25":[["H","Verkündigung des Herrn"]],"03-26":[["g","Hl. Liudger"]],"04-02":[["g","Hl. Franz von Paola"]],"04-04":[["g","Hl. Isidor von Sevilla"]],"04-05":[["g","Hl. Vinzenz Ferrer"]],"04-07":[["G","Hl. Johannes Baptist de La Salle"]],"04-11":[["G","Hl. Stanislaus"]],"04-13":[["g","Hl. Martin I."]],"04-19":[["g","Hl. Leo IX."],["g","Sel. Marcel Callo"]],"04-21":[["g","Hl. Konrad von Parzham"],["g","Hl. Anselm von Canterbury"]],"04-23":[["g","Hl. Georg"],["g","Hl. Adalbert"]],"04-24":[["g","Hl. Fidelis von Sigmaringen"]],"04-25":[["F","Hl. Markus, Evangelist"]],"04-27":[["g","Hl. Petrus Canisius"]],"04-28":[["g","Hl. Peter Chanel"],["g","Hl. Ludwig Maria Grignion de Montfort"]],"04-29":[["F","Hl. Katharina von Siena"]],"04-30":[["g","Hl. Pius V."]],"05-01":[["g","Hl. Josef der Arbeiter"]],"05-02":[["G","Hl. Athanasius"]],"05-03":[["F","Hl. Philippus und hl. Jakobus, Apostel"]],"05-04":[["g","Hl. Florian und Gefährten"]],"05-05":[["g","Hl. Godehard"]],"05-10":[["g","Hl. Johannes von Avila"]],"05-12":[["g","Hl. Nereus und hl. Achilleus"],["g","Hl. Pankratius"]],"05-13":[["g","Gedenktag Unserer Lieben Frau in Fatima"]],"05-16":[["g","Hl. Johannes Nepomuk"]],"05-18":[["g","Hl. Johannes I."]],"05-20":[["g","Hl. Bernhardin von Siena"]],"05-21":[["g","Hl. Hermann Josef"],["g","Hl. Christophorus Magallanes und Gefährten"]],"05-22":[["g","Hl. Rita von Cascia"]],"05-25":[["g","Hl. Beda der Ehrwürdige"],["g","Hl. Gregor VII."],["g","Hl. Maria Magdalena von Pazzi"]],"05-26":[["G","Hl. Philipp Neri"]],"05-27":[["g","Hl. Augustinus von Canterbury"]],"05-29":[["g","Hl. Paul VI."]],"06-01":[["G","Hl. Justin"]],"06-02":[["g","Hl. Marcellinus und hl. Petrus"]],"06-03":[["G","Hl. Karl Lwanga und Gefährten"]],"06-05":[["G","Hl. Bonifatius"]],"06-06":[["g","Hl. Norbert von Xanten"]],"06-09":[["g","Hl. Ephräm der Syrer"]],"06-11":[["G","Hl. Barnabas, Apostel"]],"06-13":[["G","Hl. Antonius von Padua"]],"06-15":[["g","Hl. Vitus"]],"06-16":[["g","Hl. Benno von Meißen"]],"06-19":[["g","Hl. Romuald"]],"06-21":[["G","Hl. Aloisius Gonzaga"]],"06-22":[["g","Hl. Paulinus von Nola"],["g","Hl. John Fisher und hl. Thomas Morus"]],"06-24":[["H","Geburt des hl. Johannes des Täufers"]],"06-27":[["g","Hl. Hemma von Gurk"],["g","Hl. Cyrill von Alexandrien"]],"06-28":[["G","Hl. Irenäus von Lyon"]],"06-29":[["H","Hl. Petrus und hl. Paulus, Apostel"]],"06-30":[["g","Hl. Otto von Bamberg"],["g","Die ersten heiligen Märtyrer der Stadt Rom"]],"07-02":[["F","Mariä Heimsuchung"]],"07-03":[["F","Hl. Thomas, Apostel"]],"07-04":[["g","Hl. Ulrich von Augsburg"],["g","Hl. Elisabeth von Portugal"]],"07-05":[["g","Hl. Antonius Maria Zaccaria"]],"07-06":[["g","Hl. Maria Goretti"]],"07-07":[["g","Hl. Willibald"]],"07-08":[["g","Hl. Kilian und Gefährten"]],"07-09":[["g","Hl. Augustinus Zhao Rong und Gefährten"]],"07-10":[["g","Hl. Knud, hl. Erich und hl. Olaf"]],"07-11":[["F","Hl. Benedikt von Nursia"]],"07-13":[["g","Hl. Heinrich und hl. Kunigunde"]],"07-14":[["g","Hl. Kamillus von Lellis"]],"07-15":[["G","Hl. Bonaventura"]],"07-16":[["g","Gedenktag Unserer Lieben Frau auf dem Berge Karmel"]],"07-20":[["g","Hl. Margareta von Antiochien"],["g","Hl. Apollinaris"]],"07-21":[["g","Hl. Laurentius von Brindisi"]],"07-22":[["F","Hl. Maria Magdalena"]],"07-23":[["F","Hl. Birgitta von Schweden"]],"07-24":[["g","Hl. Christophorus"],["g","Hl. Scharbel Machluf"]],"07-25":[["F","Hl. Jakobus, Apostel"]],"07-26":[["G","Hl. Joachim und hl. Anna"]],"07-29":[["G","Hl. Marta, hl. Maria und hl. Lazarus"]],"07-30":[["g","Hl. Petrus Chrysologus"]],"07-31":[["G","Hl. Ignatius von Loyola"]],"08-01":[["G","Hl. Alfons Maria von Liguori"]],"08-02":[["g","Hl. Eusebius von Vercelli"],["g","Hl. Petrus Julianus Eymard"]],"08-04":[["G","Hl. Johannes Maria Vianney"]],"08-05":[["g","Weihetag der Basilika Santa Maria Maggiore"]],"08-06":[["F","Verklärung des Herrn"]],"08-07":[["g","Hl. Xystus II. und Gefährten"],["g","Hl. Kajetan"]],"08-08":[["G","Hl. Dominikus"]],"08-09":[["F","Hl. Teresia Benedicta vom Kreuz (Edith Stein)"]],"08-10":[["F","Hl. Laurentius"]],"08-11":[["G","Hl. Klara von Assisi"]],"08-12":[["g","Hl. Johanna Franziska von Chantal"]],"08-13":[["g","Hl. Pontianus und hl. Hippolyt"]],"08-14":[["G","Hl. Maximilian Maria Kolbe"]],"08-15":[["H","Mariä Aufnahme in den Himmel"]],"08-16":[["g","Hl. Stephan von Ungarn"]],"08-19":[["g","Hl. Johannes Eudes"]],"08-20":[["G","Hl. Bernhard von Clairvaux"]],"08-21":[["G","Hl. Pius X."]],"08-22":[["G","Maria Königin"]],"08-23":[["g","Hl. Rosa von Lima"]],"08-24":[["F","Hl. Bartholomäus, Apostel"]],"08-25":[["g","Hl. Ludwig IX."],["g","Hl. Josef von Calasanz"]],"08-27":[["G","Hl. Monika"]],"08-28":[["G","Hl. Augustinus"]],"08-29":[["G","Enthauptung Johannes des Täufers"]],"08-31":[["g","Hl. Paulinus von Trier"]],"09-03":[["G","Hl. Gregor der Große"]],"09-05":[["g","Hl. Teresa von Kalkutta"]],"09-08":[["F","Mariä Geburt"]],"09-09":[["g","Hl. Petrus Claver"]],"09-12":[["g","Mariä Namen"]],"09-13":[["G","Hl. Johannes Chrysostomus"]],"09-14":[["F","Kreuzerhöhung"]],"09-15":[["G","Gedächtnis der Schmerzen Mariens"]],"09-16":[["G","Hl. Kornelius und hl. Cyprian"]],"09-17":[["g","Hl. Robert Bellarmin"],["g","Hl. Hildegard von Bingen"]],"09-18":[["g","Hl. Lambert von Maastricht"]],"09-19":[["g","Hl. Januarius"]],"09-20":[["G","Hl. Andreas Kim Taegon, hl. Paul Chong Hasang und Gefährten"]],"09-21":[["F","Hl. Matthäus, Apostel und Evangelist"]],"09-22":[["g","Hl. Mauritius und Gefährten"]],"09-23":[["G","Hl. Pio von Pietrelcina"]],"09-24":[["g","Hl. Rupert und hl. Virgil"]],"09-25":[["g","Hl. Niklaus von Flüe"]],"09-26":[["g","Hl. Kosmas und hl. Damian"]],"09-27":[["G","Hl. Vinzenz von Paul"]],"09-28":[["g","Hl. Lioba"],["g","Hl. Wenzel"],["g","Hl. Laurentius Ruiz und Gefährten"]],"09-29":[["F","Hl. Michael, hl. Gabriel und hl. Rafael, Erzengel"]],"09-30":[["G","Hl. Hieronymus"]],"10-01":[["G","Hl. Theresia vom Kinde Jesus"]],"10-02":[["G","Heilige Schutzengel"]],"10-04":[["G","Hl. Franz von Assisi"]],"10-05":[["g","Hl. Faustyna Kowalska"]],"10-06":[["g","Hl. Bruno"]],"10-07":[["G","Unsere Liebe Frau vom Rosenkranz"]],"10-09":[["g","Hl. Dionysius und Gefährten"],["g","Hl. Johannes Leonardi"],["g","Hl. John Henry Newman"]],"10-11":[["g","Hl. Johannes XXIII."]],"10-14":[["g","Hl. Kallistus I."]],"10-15":[["G","Hl. Teresa von Ávila"]],"10-16":[["g","Hl. Hedwig von Andechs"],["g","Hl. Margareta Maria Alacoque"],["g","Hl. Gallus"]],"10-17":[["G","Hl. Ignatius von Antiochien"]],"10-18":[["F","Hl. Lukas, Evangelist"]],"10-19":[["g","Hl. Johannes de Brébeuf, hl. Isaak Jogues und Gefährten"],["g","Hl. Paul vom Kreuz"]],"10-20":[["g","Hl. Wendelin"]],"10-21":[["g","Hl. Ursula und Gefährtinnen"]],"10-22":[["g","Hl. Johannes Paul II."]],"10-23":[["g","Hl. Johannes von Capestrano"]],"10-24":[["g","Hl. Antonius Maria Claret"]],"10-28":[["F","Hl. Simon und hl. Judas, Apostel"]],"10-31":[["g","Hl. Wolfgang von Regensburg"]],"11-01":[["H","Allerheiligen"]],"11-02":[["H","Allerseelen"]],"11-03":[["g","Hl. Martin von Porres"],["g","Hl. Hubert"],["g","Hl. Pirmin"],["g","Sel. Rupert Mayer"]],"11-04":[["G","Hl. Karl Borromäus"]],"11-06":[["g","Hl. Leonhard"]],"11-07":[["g","Hl. Willibrord"]],"11-09":[["F","Weihetag der Lateranbasilika"]],"11-10":[["G","Hl. Leo der Große"]],"11-11":[["G","Hl. Martin von Tours"]],"11-12":[["G","Hl. Josaphat"]],"11-15":[["g","Hl. Albert der Große"],["g","Hl. Leopold III."]],"11-16":[["g","Hl. Margareta von Schottland"]],"11-17":[["g","Hl. Gertrud von Helfta"]],"11-18":[["g","Weihetag der Basiliken St. Peter und St. Paul"]],"11-19":[["G","Hl. Elisabeth von Thüringen"]],"11-20":[["g","Hl. Korbinian"]],"11-21":[["G","Gedenktag Unserer Lieben Frau in Jerusalem"]],"11-22":[["G","Hl. Cäcilia"]],"11-23":[["g","Hl. Klemens I."],["g","Hl. Kolumban"]],"11-24":[["G","Hl. Andreas Dung-Lac und Gefährten"]],"11-25":[["g","Hl. Katharina von Alexandrien"]],"11-26":[["g","Hl. Konrad und hl. Gebhard von Konstanz"]],"11-30":[["F","Hl. Andreas, Apostel"]],"12-02":[["g","Hl. Luzius von Chur"]],"12-03":[["G","Hl. Franz Xaver"]],"12-04":[["g","Hl. Barbara"],["g","Hl. Johannes von Damaskus"],["g","Sel. Adolph Kolping"]],"12-05":[["g","Hl. Anno"]],"12-06":[["g","Hl. Nikolaus"]],"12-07":[["G","Hl. Ambrosius"]],"12-08":[["H","Hochfest der ohne Erbsünde empfangenen Jungfrau und Gottesmutter Maria"]],"12-09":[["g","Hl. Juan Diego Cuauhtlatoatzin"]],"12-10":[["g","Gedenktag Unserer Lieben Frau von Loreto"]],"12-11":[["g","Hl. Damasus I."]],"12-12":[["g","Unsere Liebe Frau von Guadalupe"]],"12-13":[["G","Hl. Luzia"],["g","Hl. Odilia"]],"12-14":[["G","Hl. Johannes vom Kreuz"]],"12-23":[["g","Hl. Johannes von Krakau"]],"12-25":[["H","Geburt des Herrn"]],"12-26":[["F","Hl. Stephanus"]],"12-27":[["F","Hl. Johannes, Apostel und Evangelist"]],"12-28":[["F","Unschuldige Kinder"]],"12-29":[["g","Hl. Thomas Becket"]],"12-31":[["g","Hl. Silvester I."]]},"c62":{"01-01":[["I","Oktavtag von Weihnachten"]],"01-05":[["C","Hl. Telesphorus"]],"01-06":[["I","Erscheinung des Herrn"]],"01-11":[["C","Hl. Hyginus"]],"01-13":[["II","Gedächtnis der Taufe des Herrn"]],"01-14":[["III","Hl. Hilarius"],["C","Hl. Felix von Nola"]],"01-15":[["III","Hl. Paulus der Einsiedler"],["C","Hl. Maurus"]],"01-16":[["III","Hl. Marcellus I."]],"01-17":[["III","Hl. Antonius der Große"]],"01-18":[["C","Hl. Priska"]],"01-19":[["C","Hll. Marius, Martha, Audifax und Abachum"],["C","Hl. Knud"]],"01-20":[["III","Hl. Fabian und hl. Sebastian"]],"01-21":[["III","Hl. Agnes"]],"01-22":[["III","Hl. Vinzenz und hl. Anastasius"]],"01-23":[["III","Hl. Raimund von Peñafort"],["C","Hl. Emerentiana"]],"01-24":[["III","Hl. Timotheus"]],"01-25":[["III","Bekehrung des hl. Paulus"],["C","Hl. Petrus"]],"01-26":[["III","Hl. Polykarp"]],"01-27":[["III","Hl. Johannes Chrysostomus"]],"01-28":[["III","Hl. Petrus Nolascus"],["C","Hl. Agnes"]],"01-29":[["III","Hl. Franz von Sales"]],"01-30":[["III","Hl. Martina"]],"01-31":[["III","Hl. Johannes Bosco"]],"02-01":[["III","Hl. Ignatius von Antiochien"]],"02-02":[["II","Mariä Lichtmess"]],"02-03":[["C","Hl. Blasius"]],"02-04":[["III","Hl. Andreas Corsini"]],"02-05":[["III","Hl. Agatha"]],"02-06":[["III","Hl. Titus"],["C","Hl. Dorothea"]],"02-07":[["III","Hl. Romuald"]],"02-08":[["III","Hl. Johannes von Matha"]],"02-09":[["III","Hl. Cyrill von Alexandrien"],["C","Hl. Apollonia"]],"02-10":[["III","Hl. Scholastika"]],"02-11":[["III","Erscheinung der Unbefleckten Jungfrau in Lourdes"]],"02-12":[["III","Hll. Sieben Gründer des Servitenordens"]],"02-14":[["C","Hl. Valentin"]],"02-15":[["C","Hl. Faustinus und hl. Jovita"]],"02-18":[["C","Hl. Simeon"]],"02-22":[["II","Kathedra Petri"],["C","Hl. Paulus"]],"02-23":[["III","Hl. Petrus Damiani"]],"02-24":[["II","Hl. Matthias, Apostel"]],"02-27":[["III","Hl. Gabriel von der schmerzhaften Muttergottes"]],"03-04":[["III","Hl. Kasimir"],["C","Hl. Lucius I."]],"03-06":[["III","Hl. Perpetua und hl. Felizitas"]],"03-07":[["III","Hl. Thomas von Aquin"]],"03-08":[["III","Hl. Johannes von Gott"]],"03-09":[["III","Hl. Franziska von Rom"]],"03-10":[["III","Hll. Vierzig Märtyrer"]],"03-12":[["III","Hl. Gregor der Große"]],"03-17":[["III","Hl. Patrick"]],"03-18":[["III","Hl. Cyrill von Jerusalem"]],"03-19":[["I","Hl. Josef, Bräutigam der Gottesmutter"]],"03-21":[["III","Hl. Benedikt"]],"03-24":[["III","Hl. Erzengel Gabriel"]],"03-25":[["I","Mariä Verkündigung"]],"03-27":[["III","Hl. Johannes von Damaskus"]],"03-28":[["III","Hl. Johannes von Capestrano"]],"04-02":[["III","Hl. Franz von Paola"]],"04-04":[["III","Hl. Isidor"]],"04-05":[["III","Hl. Vinzenz Ferrer"]],"04-11":[["III","Hl. Leo der Große"]],"04-13":[["III","Hl. Hermenegild"]],"04-14":[["III","Hl. Justin"],["C","Hll. Tiburtius, Valerian und Maximus"]],"04-17":[["C","Hl. Anicetus"]],"04-21":[["III","Hl. Anselm"]],"04-22":[["III","Hl. Soter und hl. Cajus"]],"04-23":[["C","Hl. Georg"]],"04-24":[["III","Hl. Fidelis von Sigmaringen"]],"04-25":[["II","Hl. Markus, Evangelist"]],"04-26":[["III","Hl. Kletus und hl. Marcellinus"]],"04-27":[["III","Hl. Petrus Canisius"]],"04-28":[["III","Hl. Paul vom Kreuz"]],"04-29":[["III","Hl. Petrus von Verona"]],"04-30":[["III","Hl. Katharina von Siena"]],"05-01":[["I","Hl. Josef der Arbeiter"]],"05-02":[["III","Hl. Athanasius"]],"05-03":[["C","Hll. Alexander, Eventius und Theodul"],["C","Hl. Juvenal"]],"05-04":[["III","Hl. Monika"]],"05-05":[["III","Hl. Pius V."]],"05-07":[["III","Hl. Stanislaus"]],"05-09":[["III","Hl. Gregor von Nazianz"]],"05-10":[["III","Hl. Antoninus"],["C","Hl. Gordian und hl. Epimachus"]],"05-11":[["II","Hl. Philippus und hl. Jakobus, Apostel"]],"05-12":[["III","Hll. Nereus, Achilleus, Domitilla und Pankratius"]],"05-13":[["III","Hl. Robert Bellarmin"]],"05-14":[["C","Hl. Bonifatius von Tarsus"]],"05-15":[["III","Hl. Johannes Baptist de La Salle"]],"05-16":[["III","Hl. Ubald"]],"05-17":[["III","Hl. Paschalis Baylon"]],"05-18":[["III","Hl. Venantius"]],"05-19":[["III","Hl. Petrus Cölestin"],["C","Hl. Pudentiana"]],"05-20":[["III","Hl. Bernhardin von Siena"]],"05-25":[["III","Hl. Gregor VII."],["C","Hl. Urban I."]],"05-26":[["III","Hl. Philipp Neri"],["C","Hl. Eleutherius"]],"05-27":[["III","Hl. Beda der Ehrwürdige"],["C","Hl. Johannes I."]],"05-28":[["III","Hl. Augustinus von Canterbury"]],"05-29":[["III","Hl. Maria Magdalena von Pazzi"]],"05-30":[["C","Hl. Felix I."]],"05-31":[["II","Maria Königin"],["C","Hl. Petronilla"]],"06-01":[["III","Hl. Angela Merici"]],"06-02":[["C","Hll. Marcellinus, Petrus und Erasmus"]],"06-04":[["III","Hl. Franz Caracciolo"]],"06-05":[["III","Hl. Bonifatius"]],"06-06":[["III","Hl. Norbert"]],"06-09":[["C","Hl. Primus und hl. Felicianus"]],"06-10":[["III","Hl. Margareta von Schottland"]],"06-11":[["III","Hl. Barnabas, Apostel"]],"06-12":[["III","Hl. Johannes von Sahagún"],["C","Hll. Basilides, Cyrinus, Nabor und Nazarius"]],"06-13":[["III","Hl. Antonius von Padua"]],"06-14":[["III","Hl. Basilius der Große"]],"06-15":[["C","Hll. Vitus, Modestus und Crescentia"]],"06-17":[["III","Hl. Gregor Barbarigo"]],"06-18":[["III","Hl. Ephräm der Syrer"],["C","Hl. Markus und hl. Marcellianus"]],"06-19":[["III","Hl. Juliana Falconieri"],["C","Hl. Gervasius und hl. Protasius"]],"06-20":[["C","Hl. Silverius"]],"06-21":[["III","Hl. Aloisius Gonzaga"]],"06-22":[["III","Hl. Paulinus von Nola"]],"06-23":[["II","Vigil von Johannes dem Täufer"]],"06-24":[["I","Geburt des hl. Johannes des Täufers"]],"06-25":[["III","Hl. Wilhelm von Vercelli"]],"06-26":[["III","Hl. Johannes und hl. Paulus"]],"06-28":[["II","Vigil von Petrus und Paulus"]],"06-29":[["I","Hl. Petrus und hl. Paulus, Apostel"]],"06-30":[["III","Gedächtnis des hl. Paulus"]],"07-01":[["I","Kostbares Blut unseres Herrn Jesus Christus"]],"07-02":[["II","Mariä Heimsuchung"],["C","Hl. Processus und hl. Martinian"]],"07-03":[["III","Hl. Irenäus"]],"07-05":[["III","Hl. Antonius Maria Zaccaria"]],"07-07":[["III","Hl. Cyrill und hl. Methodius"]],"07-08":[["III","Hl. Elisabeth von Portugal"]],"07-10":[["III","Hll. Sieben Brüder"],["C","Hl. Rufina und hl. Secunda"]],"07-11":[["C","Hl. Pius I."]],"07-12":[["III","Hl. Johannes Gualbertus"],["C","Hl. Nabor und hl. Felix"]],"07-14":[["III","Hl. Bonaventura"]],"07-15":[["III","Hl. Heinrich II."]],"07-16":[["C","Unsere Liebe Frau auf dem Berge Karmel"]],"07-17":[["C","Hl. Alexius"]],"07-18":[["III","Hl. Kamillus von Lellis"],["C","Hl. Symphorosa und ihre sieben Söhne"]],"07-19":[["III","Hl. Vinzenz von Paul"]],"07-20":[["III","Hl. Hieronymus Ämiliani"],["C","Hl. Margareta"]],"07-21":[["III","Hl. Laurentius von Brindisi"]],"07-22":[["III","Hl. Maria Magdalena"]],"07-23":[["III","Hl. Apollinaris"]],"07-24":[["C","Hl. Christina"]],"07-25":[["II","Hl. Jakobus, Apostel"]],"07-26":[["II","Hl. Anna"]],"07-27":[["C","Hl. Pantaleon"]],"07-28":[["III","Hll. Nazarius, Celsus, Viktor I. und Innozenz I."]],"07-29":[["III","Hl. Marta"]],"07-30":[["C","Hl. Abdon und hl. Sennen"]],"07-31":[["III","Hl. Ignatius von Loyola"]],"08-01":[["C","Hll. Makkabäische Brüder"]],"08-02":[["III","Hl. Alfons Maria von Liguori"],["C","Hl. Stephan I."]],"08-04":[["III","Hl. Dominikus"]],"08-05":[["III","Weihe der Kirche Maria Schnee"]],"08-06":[["II","Verklärung des Herrn"],["C","Hll. Xystus II., Felicissimus und Agapitus"]],"08-07":[["III","Hl. Kajetan"],["C","Hl. Donatus"]],"08-08":[["III","Hl. Johannes Maria Vianney"],["C","Hll. Cyriakus, Largus und Smaragdus"]],"08-09":[["III","Vigil des hl. Laurentius"],["C","Hl. Romanus"]],"08-10":[["II","Hl. Laurentius"]],"08-11":[["C","Hl. Tiburtius und hl. Susanna"]],"08-12":[["III","Hl. Klara"]],"08-13":[["C","Hl. Hippolyt und hl. Cassian"]],"08-14":[["II","Vigil von Mariä Himmelfahrt"],["C","Hl. Eusebius"]],"08-15":[["I","Mariä Himmelfahrt"]],"08-16":[["II","Hl. Joachim"]],"08-17":[["III","Hl. Hyazinth"]],"08-18":[["C","Hl. Agapitus"]],"08-19":[["III","Hl. Johannes Eudes"]],"08-20":[["III","Hl. Bernhard von Clairvaux"]],"08-21":[["III","Hl. Johanna Franziska von Chantal"]],"08-22":[["II","Unbeflecktes Herz Mariä"],["C","Hl. Timotheus und Gefährten"]],"08-23":[["III","Hl. Philippus Benitius"]],"08-24":[["II","Hl. Bartholomäus, Apostel"]],"08-25":[["III","Hl. Ludwig IX."]],"08-26":[["C","Hl. Zephyrinus"]],"08-27":[["III","Hl. Josef von Calasanz"]],"08-28":[["III","Hl. Augustinus"],["C","Hl. Hermes"]],"08-29":[["III","Enthauptung Johannes des Täufers"],["C","Hl. Sabina"]],"08-30":[["III","Hl. Rosa von Lima"],["C","Hl. Felix und hl. Adauctus"]],"08-31":[["III","Hl. Raimund Nonnatus"]],"09-01":[["C","Hl. Ägidius"],["C","Hll. Zwölf Brüder"]],"09-02":[["III","Hl. Stephan von Ungarn"]],"09-03":[["III","Hl. Pius X."]],"09-05":[["III","Hl. Laurentius Justinianus"]],"09-08":[["II","Mariä Geburt"],["C","Hl. Hadrian"]],"09-09":[["C","Hl. Gorgonius"]],"09-10":[["III","Hl. Nikolaus von Tolentino"]],"09-11":[["C","Hl. Protus und hl. Hyazinth"]],"09-12":[["III","Mariä Namen"]],"09-14":[["II","Kreuzerhöhung"]],"09-15":[["II","Sieben Schmerzen Mariens"],["C","Hl. Nikomedes"]],"09-16":[["III","Hl. Kornelius und hl. Cyprian"],["C","Hll. Euphemia, Lucia und Geminianus"]],"09-17":[["C","Wundmale des hl. Franziskus"]],"09-18":[["III","Hl. Josef von Copertino"]],"09-19":[["III","Hl. Januarius und Gefährten"]],"09-20":[["C","Hl. Eustachius und Gefährten"]],"09-21":[["II","Hl. Matthäus, Apostel und Evangelist"]],"09-22":[["III","Hl. Thomas von Villanova"],["C","Hl. Mauritius und Gefährten"]],"09-23":[["III","Hl. Linus"],["C","Hl. Thekla"]],"09-24":[["C","Unsere Liebe Frau vom Loskauf der Gefangenen"]],"09-26":[["C","Hl. Cyprian und hl. Justina"]],"09-27":[["III","Hl. Kosmas und hl. Damian"]],"09-28":[["III","Hl. Wenzel"]],"09-29":[["I","Weihe der Kirche des hl. Erzengels Michael"]],"09-30":[["III","Hl. Hieronymus"]],"10-01":[["C","Hl. Remigius"]],"10-02":[["III","Heilige Schutzengel"]],"10-03":[["III","Hl. Theresia vom Kinde Jesus"]],"10-04":[["III","Hl. Franz von Assisi"]],"10-05":[["C","Hl. Placidus und Gefährten"]],"10-06":[["III","Hl. Bruno"]],"10-07":[["II","Unsere Liebe Frau vom Rosenkranz"],["C","Hl. Markus"]],"10-08":[["III","Hl. Birgitta"],["C","Hll. Sergius, Bacchus, Marcellus und Apuleius"]],"10-09":[["III","Hl. Johannes Leonardi"],["C","Hll. Dionysius, Rustikus und Eleutherius"]],"10-10":[["III","Hl. Franz Borgia"]],"10-11":[["II","Mutterschaft Mariens"]],"10-13":[["III","Hl. Eduard der Bekenner"]],"10-14":[["III","Hl. Kallistus I."]],"10-15":[["III","Hl. Teresa von Ávila"]],"10-16":[["III","Hl. Hedwig"]],"10-17":[["III","Hl. Margareta Maria Alacoque"]],"10-18":[["II","Hl. Lukas, Evangelist"]],"10-19":[["III","Hl. Petrus von Alcantara"]],"10-20":[["III","Hl. Johannes von Krakau"]],"10-21":[["C","Hl. Hilarion"],["C","Hl. Ursula und Gefährtinnen"]],"10-23":[["III","Hl. Antonius Maria Claret"]],"10-24":[["III","Hl. Erzengel Raphael"]],"10-25":[["C","Hl. Chrysanthus und hl. Daria"]],"10-26":[["C","Hl. Evaristus"]],"10-28":[["II","Hl. Simon und hl. Judas, Apostel"]],"11-01":[["I","Allerheiligen"]],"11-02":[["I","Allerseelen"]],"11-04":[["III","Hl. Karl Borromäus"],["C","Hl. Vitalis und hl. Agricola"]],"11-08":[["C","Hll. Vier Gekrönte"]],"11-09":[["II","Weihe der Lateranbasilika"],["C","Hl. Theodor"]],"11-10":[["III","Hl. Andreas Avellino"],["C","Hll. Tryphon, Respicius und Nympha"]],"11-11":[["III","Hl. Martin von Tours"],["C","Hl. Menas"]],"11-12":[["III","Hl. Martin I."]],"11-13":[["III","Hl. Didakus"]],"11-14":[["III","Hl. Josaphat"]],"11-15":[["III","Hl. Albert der Große"]],"11-16":[["III","Hl. Gertrud"]],"11-17":[["III","Hl. Gregor der Wundertäter"]],"11-18":[["III","Weihe der Basiliken St. Peter und St. Paul"]],"11-19":[["III","Hl. Elisabeth von Thüringen"],["C","Hl. Pontianus"]],"11-20":[["III","Hl. Felix von Valois"]],"11-21":[["III","Mariä Opferung"]],"11-22":[["III","Hl. Cäcilia"]],"11-23":[["III","Hl. Klemens I."],["C","Hl. Felizitas"]],"11-24":[["III","Hl. Johannes vom Kreuz"],["C","Hl. Chrysogonus"]],"11-25":[["III","Hl. Katharina von Alexandrien"]],"11-26":[["III","Hl. Silvester Gozzolini"],["C","Hl. Petrus von Alexandrien"]],"11-29":[["C","Hl. Saturninus"]],"11-30":[["II","Hl. Andreas, Apostel"]],"12-02":[["III","Hl. Bibiana"]],"12-03":[["III","Hl. Franz Xaver"]],"12-04":[["III","Hl. Petrus Chrysologus"],["C","Hl. Barbara"]],"12-05":[["C","Hl. Sabbas"]],"12-06":[["III","Hl. Nikolaus"]],"12-07":[["III","Hl. Ambrosius"]],"12-08":[["I","Unbefleckte Empfängnis Mariens"]],"12-10":[["C","Hl. Melchiades"]],"12-11":[["III","Hl. Damasus I."]],"12-13":[["III","Hl. Luzia"]],"12-16":[["III","Hl. Eusebius von Vercelli"]],"12-21":[["II","Hl. Thomas, Apostel"]],"12-24":[["I","Heiliger Abend (Vigil von Weihnachten)"]],"12-25":[["I","Geburt des Herrn"]],"12-26":[["II","Hl. Stephanus"]],"12-27":[["II","Hl. Johannes, Apostel und Evangelist"]],"12-28":[["II","Unschuldige Kinder"]],"12-29":[["II","Tag in der Weihnachtsoktav"],["C","Hl. Thomas Becket"]],"12-30":[["II","Tag in der Weihnachtsoktav"]],"12-31":[["II","Tag in der Weihnachtsoktav"],["C","Hl. Silvester I."]]}};
 function pron(src, style) {
@@ -678,6 +711,7 @@ var TRAD_STRESS = {
 class Component extends DCLogic {
   renderVals() {
     var S = this.state || {};
+    if (!this.props.season) RK_NAV.main = this;
     // Sprache der Gebete: DE, LA oder LA+ (Latein mit Aussprachehilfe)
     var langSel = S.lang || 'de';
     var lang = langSel === 'de' ? 'de' : 'la';
@@ -933,8 +967,8 @@ class Component extends DCLogic {
     return {
       c: c,
       prayerOpen: !!S.prayer,
-      openPrayer: function () { try { window.scrollTo(0, 0); } catch (e) {} self.setState({ prayer: true }); },
-      closePrayer: function () { self.setState({ prayer: false }); },
+      openPrayer: function () { try { window.scrollTo(0, 0); } catch (e) {} RK_NAV.go('gebet'); self.setState({ prayer: true }); },
+      closePrayer: function () { RK_NAV.leave('gebet'); self.setState({ prayer: false }); },
       mode: mode, sel: sel, themePref: themePref, litOn: litOn, season: season,
       pronAttr: pronOn ? pronStyle : 'aus',
       pronStyle: pronStyle,
@@ -945,8 +979,8 @@ class Component extends DCLogic {
       heroImg: { src: hv[0], alt: hv[1] },
       saint: dayInfo(now.getMonth(), now.getDate()),
       calendarOpen: calOpen,
-      openCalendar: function () { try { window.scrollTo(0, 0); } catch (e) {} self.setState({ calOpen: true, calMonth: now.getMonth() }); },
-      closeCalendar: function () { self.setState({ calOpen: false }); },
+      openCalendar: function () { try { window.scrollTo(0, 0); } catch (e) {} RK_NAV.go('kalender'); self.setState({ calOpen: true, calMonth: now.getMonth() }); },
+      closeCalendar: function () { RK_NAV.leave('kalender'); self.setState({ calOpen: false }); },
       prevMonth: function () { self.setState({ calMonth: (calMonth + 11) % 12 }); },
       nextMonth: function () { self.setState({ calMonth: (calMonth + 1) % 12 }); },
       monthLabel: monthsCal[calMonth] + ' ' + year,
@@ -966,7 +1000,23 @@ class Component extends DCLogic {
       litDayLabel: litDayLabel,
       seasonColor: s.color,
       seasonName: s.de,
-      seasonPlaceholder: '', offlineText: window.__rkOfflineText || '', hasOffline: !!window.__rkOfflineText,
+      seasonPlaceholder: '',
+      introOpen: !this.props.season && !S.introSeen,
+      closeIntro: function () { self.setState({ introSeen: true }); },
+      reopenIntro: function () { try { window.scrollTo(0, 0); } catch (e) {} self.setState({ introSeen: false, settings: false }); },
+      introInstalled: RK_ENV.standalone, introNotInstalled: !RK_ENV.standalone,
+      introIOS: RK_ENV.showIOS, introAndroid: RK_ENV.showAndroid,
+      iosSteps: [
+        'Öffne die Seite in Safari.',
+        'Tippe auf die drei Punkte (•••) neben der Adresszeile und dann auf „Teilen“. Bei älteren iOS-Versionen tippst du direkt auf das Teilen-Symbol (Quadrat mit Pfeil nach oben).',
+        'Scrolle nach unten und tippe auf „Zum Home-Bildschirm“.',
+        'Lass „Als Web-App öffnen“ eingeschaltet, falls der Schalter erscheint, und tippe auf „Hinzufügen“.'
+      ],
+      androidSteps: [
+        'Öffne die Seite in Chrome.',
+        'Tippe oben rechts auf die drei Punkte (⋮).',
+        'Tippe auf „App installieren“ oder „Zum Startbildschirm hinzufügen“ und bestätige.'
+      ], offlineText: window.__rkOfflineText || '', hasOffline: !!window.__rkOfflineText,
       heroLabel: sel === todayKey ? t.today : t.selected,
       hero: hero,
       mysteries: mysteries
@@ -975,8 +1025,9 @@ class Component extends DCLogic {
 }
 
 return Component;
-})(), ["lang", "mode", "theme", "lit", "pronStyle", "alt", "trad", "cal62"]);
+})(), ["lang", "mode", "theme", "lit", "pronStyle", "alt", "trad", "cal62", "introSeen"]);
 DC.mount('Main', document.getElementById('app'));
+RK_NAV.sync();
 
 // Hintergrund und Statusleiste folgen dem Erscheinungsbild der App
 (function () {
@@ -1005,15 +1056,51 @@ DC.mount('Main', document.getElementById('app'));
         : n + ' von ' + total + ' Bildern sind gespeichert. Die übrigen werden geladen, solange die App geöffnet und mit dem Internet verbunden ist.');
     }).catch(function () {});
   }
+  var running = false;
+  function timedFetch(u) {
+    var ctl = window.AbortController ? new AbortController() : null;
+    var t = ctl ? setTimeout(function () { ctl.abort(); }, 30000) : null;
+    return fetch(u, ctl ? { cache: 'no-cache', signal: ctl.signal } : { cache: 'no-cache' })
+      .then(function (r) { clearTimeout(t); return r; }, function (e) { clearTimeout(t); throw e; });
+  }
+  // Fehlende Bilder von der Seite aus nachladen, solange die App offen ist
+  function fillFromPage() {
+    if (running || !window.caches || navigator.onLine === false) return;
+    running = true;
+    caches.open('rosenkranz-bilder-1').then(function (cache) {
+      var i = 0;
+      function worker() {
+        if (i >= IMGS.length) return Promise.resolve();
+        var u = IMGS[i++];
+        return caches.match(u).then(function (hit) {
+          if (hit) return;
+          return timedFetch(u).then(function (r) { if (r.ok) return cache.put(u, r).then(recount); });
+        }).catch(function () {}).then(worker);
+      }
+      return Promise.all([worker(), worker()]);
+    }).catch(function () {}).then(function () {
+      running = false;
+      recount();
+      // Fehlt noch etwas (z. B. Netz kurz weg), in 20 Sekunden erneut versuchen
+      Promise.all(IMGS.map(function (u) { return caches.match(u); })).then(function (r) {
+        if (r.some(function (x) { return !x; })) setTimeout(fillFromPage, 20000);
+      }).catch(function () {});
+    });
+  }
   navigator.serviceWorker.addEventListener('message', function (e) { if (e.data && e.data.type === 'progress') recount(); });
   window.addEventListener('load', function () {
     navigator.serviceWorker.register('sw.js').catch(function () {});
+    recount();
     navigator.serviceWorker.ready.then(function (reg) {
       recount();
       if (reg.active) reg.active.postMessage('fill');
+      setTimeout(fillFromPage, 1500);
     });
   });
+  window.addEventListener('online', fillFromPage);
   document.addEventListener('visibilitychange', function () {
-    if (document.visibilityState === 'visible' && navigator.serviceWorker.controller) navigator.serviceWorker.controller.postMessage('fill');
+    if (document.visibilityState !== 'visible') return;
+    if (navigator.serviceWorker.controller) navigator.serviceWorker.controller.postMessage('fill');
+    setTimeout(fillFromPage, 1500);
   });
 })();

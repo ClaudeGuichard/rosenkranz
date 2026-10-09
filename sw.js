@@ -2,7 +2,7 @@
 // Kern (Seite, Code, Schriften, Symbole) wird bei der Installation komplett gespeichert.
 // Bilder liegen in einem eigenen Speicher und werden einzeln nachgeladen; ein
 // Abbruch (z. B. App geschlossen) setzt beim nächsten Start dort fort.
-var CORE_CACHE = 'rosenkranz-kern-d4ba32f338';
+var CORE_CACHE = 'rosenkranz-kern-95a0725b42';
 var IMG_CACHE = 'rosenkranz-bilder-1';
 var CORE = [
 "./",
@@ -117,9 +117,12 @@ function fill() {
       function worker() {
         if (i >= todo.length) return Promise.resolve();
         var u = todo[i++];
-        return fetch(u, { cache: 'no-cache' }).then(function (r) {
+        var ctl = self.AbortController ? new AbortController() : null;
+        var t = ctl ? setTimeout(function () { ctl.abort(); }, 30000) : null;
+        return fetch(u, ctl ? { cache: 'no-cache', signal: ctl.signal } : { cache: 'no-cache' }).then(function (r) {
+          clearTimeout(t);
           if (r.ok) return cache.put(u, r).then(notify);
-        }).catch(function () {}).then(worker);
+        }).catch(function () { clearTimeout(t); }).then(worker);
       }
       return Promise.all([worker(), worker(), worker()]);
     });

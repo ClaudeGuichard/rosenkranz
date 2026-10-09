@@ -318,11 +318,58 @@ button{touch-action:manipulation}
 </div>
 </sc-if>
 <sc-if value="{{hasOffline}}"><div style="display: flex; flex-direction: column; gap: 4px; padding: 14px 0 4px; border-top: 1px solid {{c.rule}}"><span style="font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 16px; font-weight: 600">Offline</span><span role="status" style="font-size: 16px; line-height: 1.4; color: {{c.muted}}">{{offlineText}}</span></div></sc-if>
+<button type="button" onClick="{{reopenIntro}}" style="margin-top: 8px; height: 48px; border: 1px solid {{c.ink}}; border-radius: 8px; background: transparent; color: {{c.ink}}; font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 16px; font-weight: 600; cursor: pointer">Hinweise zu LA+ und Speichern</button>
 <button type="button" onClick="{{closeSettings}}" style="margin-top: 8px; height: 48px; border: 0; border-radius: 8px; background: {{c.ink}}; color: {{c.paper}}; font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 16px; font-weight: 600; cursor: pointer">Fertig</button>
 </section>
 </div>
 </sc-if>
 
+
+<sc-if value="{{introOpen}}">
+<div style="position: fixed; top: 0; right: 0; bottom: 0; left: 0; z-index: 30; background: rgba(29, 27, 24, 0.5); overflow-y: auto; display: flex; padding: calc(16px + env(safe-area-inset-top, 0px)) 16px calc(16px + env(safe-area-inset-bottom, 0px)); box-sizing: border-box">
+<section role="dialog" aria-modal="true" aria-labelledby="intro-titel" style="margin: auto; width: 100%; max-width: 440px; box-sizing: border-box; background: {{c.paper}}; color: {{c.ink}}; border-radius: 14px; padding: 24px 22px 20px; display: flex; flex-direction: column; gap: 22px">
+<div style="display: flex; flex-direction: column; gap: 8px">
+<h2 id="intro-titel" style="margin: 0; font-size: 30px; font-weight: 600; line-height: 1.15">Willkommen</h2>
+<p style="font-size: 18px; line-height: 1.45; margin: 0">Diese App begleitet dich durch den Rosenkranz, ein Gebet nach dem anderen. Zwei Hinweise vorab.</p>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 12px">
+<span style="font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 13px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: {{c.accentText}}">Sprache der Gebete</span>
+<p style="font-size: 18px; line-height: 1.45; margin: 0">Oben rechts wählst du, in welcher Sprache gebetet wird. Die App selbst bleibt auf Deutsch.</p>
+<div style="display: flex; align-items: flex-start; gap: 14px"><span style="font-family: 'Source Sans 3', system-ui, sans-serif; flex: none; min-width: 48px; height: 32px; padding: 0 8px; box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; border: 1px solid {{c.ink}}; border-radius: 8px; font-size: 15px; font-weight: 600">DE</span><p style="font-size: 18px; line-height: 1.45; margin: 0">Die Gebete auf Deutsch.</p></div>
+<div style="display: flex; align-items: flex-start; gap: 14px"><span style="font-family: 'Source Sans 3', system-ui, sans-serif; flex: none; min-width: 48px; height: 32px; padding: 0 8px; box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; border: 1px solid {{c.ink}}; border-radius: 8px; font-size: 15px; font-weight: 600">LA</span><p style="font-size: 18px; line-height: 1.45; margin: 0">Die Gebete und Geheimnisse auf Latein.</p></div>
+<div style="display: flex; align-items: flex-start; gap: 14px"><span style="font-family: 'Source Sans 3', system-ui, sans-serif; flex: none; min-width: 48px; height: 32px; padding: 0 8px; box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; border: 1px solid {{c.ink}}; border-radius: 8px; font-size: 15px; font-weight: 600; background: {{c.ink}}; color: {{c.paper}}">LA+</span><p style="font-size: 18px; line-height: 1.45; margin: 0">Latein mit Aussprachehilfe. Unter jedem lateinischen Text steht, wie er gesprochen wird, betonte Silben tragen einen Akzent. In den Einstellungen wählst du römische Aussprache (caeli wie „tschéli“) oder deutsche (caeli wie „zäli“).</p></div>
+</div>
+
+<sc-if value="{{introNotInstalled}}">
+<div style="display: flex; flex-direction: column; gap: 12px">
+<span style="font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 13px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: {{c.accentText}}">Auf dem Handy speichern</span>
+<p style="font-size: 18px; line-height: 1.45; margin: 0">Leg die App auf deinen Home-Bildschirm. Dann startet sie wie eine normale App, ohne Browserleisten.</p>
+<sc-if value="{{introIOS}}">
+<p style="font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 16px; font-weight: 600; margin: 0">iPhone und iPad</p>
+<ol style="margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 6px; font-size: 18px; line-height: 1.45"><sc-for list="{{iosSteps}}" as="t"><li>{{t}}</li></sc-for></ol>
+</sc-if>
+<sc-if value="{{introAndroid}}">
+<p style="font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 16px; font-weight: 600; margin: 0">Android</p>
+<ol style="margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 6px; font-size: 18px; line-height: 1.45"><sc-for list="{{androidSteps}}" as="t"><li>{{t}}</li></sc-for></ol>
+</sc-if>
+<p style="font-size: 18px; line-height: 1.45; margin: 0"><strong style="font-weight: 600">Wichtig:</strong> Öffne die App danach einmal vom Home-Bildschirm aus und lass sie mit Internet offen, bis unter „Offline“ in den Einstellungen alle 60 Bilder gespeichert sind. Erst dann funktioniert sie vollständig ohne Netz.</p>
+<sc-if value="{{hasOffline}}"><p role="status" style="font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 15px; line-height: 1.4; margin: 0; padding: 10px 12px; border: 1px solid {{c.rule}}; border-radius: 8px; color: {{c.muted}}">Stand: {{offlineText}}</p></sc-if>
+</div>
+</sc-if>
+<sc-if value="{{introInstalled}}">
+<div style="display: flex; flex-direction: column; gap: 12px">
+<span style="font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 13px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: {{c.accentText}}">Offline beten</span>
+<p style="font-size: 18px; line-height: 1.45; margin: 0">Die App ist auf deinem Gerät. Lass sie jetzt mit Internet offen, bis alle 60 Bilder gespeichert sind. Erst dann funktioniert sie vollständig ohne Netz. Den Stand siehst du auch später in den Einstellungen unter „Offline“.</p>
+<sc-if value="{{hasOffline}}"><p role="status" style="font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 15px; line-height: 1.4; margin: 0; padding: 10px 12px; border: 1px solid {{c.rule}}; border-radius: 8px; color: {{c.muted}}">Stand: {{offlineText}}</p></sc-if>
+</div>
+</sc-if>
+
+<button type="button" onClick="{{closeIntro}}" style="height: 50px; border: 0; border-radius: 8px; background: {{c.ink}}; color: {{c.paper}}; font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 17px; font-weight: 600; cursor: pointer">Verstanden</button>
+<p style="font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 14px; line-height: 1.4; margin: -10px 0 0; text-align: center; color: {{c.muted}}">Diese Hinweise findest du jederzeit in den Einstellungen.</p>
+</section>
+</div>
+</sc-if>
 </div>
 </template>
 <template id="tpl-Gebet">
