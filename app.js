@@ -402,6 +402,8 @@ class Component extends DCLogic {
   renderVals() {
     var S = this.state || {};
     var P = this.props;
+    // Perlenzähler: Standard an, über die Einstellungen der Startseite abschaltbar
+    var perlenOn = !(P.perlen === false || P.perlen === 'false');
     var self = this;
     // Sprache: DE, LA oder LA+ (Latein mit Aussprachehilfe); Startwert von der Startseite
     var initSel = (P.sprache === 'la') ? ((P.aussprache && P.aussprache !== 'aus') ? 'la+' : 'la') : 'de';
@@ -508,7 +510,7 @@ class Component extends DCLogic {
       hasRef: s.key === 'ansage',
       refName: s.part === 'dec' ? NAME_DE[m][s.dec] : '',
       refText: s.part === 'dec' ? REF[m][s.dec] : '',
-      isCounter: !!s.beads,
+      isCounter: !!s.beads && perlenOn,
       counterLabel: full ? 'Alle zehn Ave gebetet' : 'Ave gebetet',
       counterBg: full ? c.rule2 : c.card,
       inc: function () { if (cnt < s.beads) setCount(cnt + 1); },
@@ -523,7 +525,7 @@ class Component extends DCLogic {
       showFlow: flow && !betr && (showText || s.key === 'ansage'),
       lineSize: longText ? '19px' : '22px',
       showLineList: !flow && !betr && (showText || s.key === 'ansage'),
-      imgHeight: betr ? '400px' : '230px',
+      imgHeight: betr ? 'clamp(360px, 62vh, 640px)' : 'clamp(230px, 38vh, 380px)',
       mystSize: betr ? '26px' : '20px',
       lines: lines,
       lineGap: (la && pronMode !== 'aus') ? '8px' : '0px',
@@ -533,7 +535,7 @@ class Component extends DCLogic {
       textTrack: S.hideText ? (dark ? '#5A544B' : '#B8AFA2') : c.accentFill,
       textJustify: S.hideText ? 'flex-start' : 'flex-end',
       hasHint: beginner && !!s.hint,
-      hint: s.hint,
+      hint: perlenOn ? s.hint : s.hint.replace(' Tippe nach jedem Ave auf den Zähler.', ''),
       beads: beadsArr,
       beadLabel: s.beads ? 'Ave gebetet, ' + cnt + ' von ' + s.beads + ' gezählt' : '',
       prev: function () { toTop(); self.setState({ step: Math.max(0, i - 1) }); },
@@ -568,9 +570,10 @@ var RK_NAV = window.RK_NAV = {
   sync: function () {
     var m = this.main; if (!m) return;
     var h = location.hash, S = m.state || {};
-    var wantPrayer = h === '#gebet', wantCal = h === '#kalender';
-    if (!wantPrayer && !wantCal) this.pushed = false;
+    var wantPrayer = h === '#gebet', wantCal = h === '#kalender', wantLegal = h === '#impressum';
+    if (!wantPrayer && !wantCal && !wantLegal) this.pushed = false;
     var u = {};
+    if (!!S.legal !== wantLegal) u.legal = wantLegal;
     if (!!S.prayer !== wantPrayer) u.prayer = wantPrayer;
     if (!!S.calOpen !== wantCal) { u.calOpen = wantCal; if (wantCal) u.calMonth = new Date().getMonth(); }
     if (Object.keys(u).length) m.setState(u);
@@ -942,6 +945,7 @@ class Component extends DCLogic {
       };
     });
 
+    var perlenOn = S.perlen !== undefined ? S.perlen : (this.props.perlenzaehler ?? true);
     var toggles = [
       { id: 'opt-rhythmus', key: 'alt', on: alt, label: 'Alter Rhythmus',
         desc: 'Wochenplan vor 2002: Montag und Donnerstag freudenreich, Dienstag und Freitag schmerzhaft, Mittwoch, Samstag und Sonntag glorreich. Ohne lichtreiche Geheimnisse.' },
@@ -949,6 +953,8 @@ class Component extends DCLogic {
         desc: 'Lateinische Namen der Geheimnisse in der älteren Form, zum Beispiel Agonia in Horto.' },
       { id: 'opt-kalender', key: 'cal62', on: cal62, label: 'Kalender von 1962',
         desc: 'Tagesheilige nach dem Kalender der außerordentlichen Form statt nach dem Regionalkalender für das deutsche Sprachgebiet.' },
+      { id: 'opt-perlen', key: 'perlen', on: perlenOn, label: 'Perlenzähler',
+        desc: 'Beim Ave Maria zehn Perlen zum Mitzählen anzeigen. Ausgeschaltet zählst du selbst, zum Beispiel mit deinem eigenen Rosenkranz.' },
       { id: 'opt-litfarbe', key: 'lit', on: litOn, label: 'Liturgische Farbe',
         desc: 'Färbt Knöpfe und Hervorhebungen in der Farbe der Zeit im Kirchenjahr, in hellem wie dunklem Erscheinungsbild.' }
     ].map(function (o) {
@@ -1010,6 +1016,7 @@ class Component extends DCLogic {
       openSettings: function () { self.setState({ settings: true }); },
       closeSettings: function () { self.setState({ settings: false }); },
       toggles: toggles,
+      perlenOn: perlenOn,
       t: t,
       lang: lang,
       langs: langs,
@@ -1021,6 +1028,10 @@ class Component extends DCLogic {
       seasonColor: s.color,
       seasonName: s.de,
       seasonPlaceholder: '',
+      legalOpen: !this.props.season && !!S.legal,
+      openLegal: function () { RK_NAV.go('impressum'); self.setState({ legal: true, settings: false }); },
+      closeLegal: function () { RK_NAV.leave('impressum'); self.setState({ legal: false }); },
+      imp: {"name": "[Vor- und Nachname]", "strasse": "[Straße und Hausnummer]", "ort": "[PLZ und Ort]", "email": "[E-Mail-Adresse]", "stand": "Oktober 2026"},
       introOpen: !this.props.season && !S.introSeen,
       closeIntro: function () { self.setState({ introSeen: true }); },
       reopenIntro: function () { try { window.scrollTo(0, 0); } catch (e) {} self.setState({ introSeen: false, settings: false }); },
@@ -1047,7 +1058,7 @@ class Component extends DCLogic {
 }
 
 return Component;
-})(), ["lang", "mode", "theme", "lit", "pronStyle", "alt", "trad", "cal62", "introSeen"]);
+})(), ["lang", "mode", "theme", "lit", "pronStyle", "alt", "trad", "cal62", "introSeen", "perlen"]);
 DC.mount('Main', document.getElementById('app'));
 RK_NAV.sync();
 
