@@ -2,7 +2,7 @@
 // Kern (Seite, Code, Schriften, Symbole) wird bei der Installation komplett gespeichert.
 // Bilder liegen in einem eigenen Speicher und werden einzeln nachgeladen; ein
 // Abbruch (z. B. App geschlossen) setzt beim nächsten Start dort fort.
-var CORE_CACHE = 'rosenkranz-kern-849cce8221';
+var CORE_CACHE = 'rosenkranz-kern-a0cb699883';
 var IMG_CACHE = 'rosenkranz-bilder-1';
 var CORE = [
 "./",

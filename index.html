@@ -241,13 +241,13 @@ button{touch-action:manipulation}
 </section>
 
 <sc-if value="{{prayerOpen}}" hint-placeholder-val="{{ false }}">
-<div style="position: fixed; top: 0; right: 0; bottom: 0; left: 0; z-index: 20; display: flex; justify-content: center; box-sizing: border-box; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); background: {{c.paper}}">
+<div style="position: fixed; top: 0; right: 0; bottom: 0; left: 0; z-index: 20; display: flex; justify-content: center; box-sizing: border-box; overscroll-behavior: contain; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); background: {{c.paper}}">
 <dc-import name="Gebet" vollbild="ja" sprache="{{lang}}" modus="{{mode}}" geheimnis="{{sel}}" erscheinungsbild="{{themePref}}" liturgische-farbe="{{litOn}}" season="{{season}}" aussprache="{{pronAttr}}" aussprache-stil="{{pronStyle}}" on-close="{{closePrayer}}" hint-size="390px,844px"></dc-import>
 </div>
 </sc-if>
 
 <sc-if value="{{calendarOpen}}" hint-placeholder-val="{{ false }}">
-<div role="dialog" aria-modal="true" aria-labelledby="kalender-titel" style="position: fixed; z-index: 20; top: 0; right: 0; bottom: 0; left: 0; background: {{c.paper}}; overflow-y: auto; padding: calc(20px + env(safe-area-inset-top, 0px)) 20px calc(40px + env(safe-area-inset-bottom, 0px)); box-sizing: border-box; display: flex; flex-direction: column; gap: 18px">
+<div role="dialog" aria-modal="true" aria-labelledby="kalender-titel" style="overscroll-behavior: contain; position: fixed; z-index: 20; top: 0; right: 0; bottom: 0; left: 0; background: {{c.paper}}; overflow-y: auto; padding: calc(20px + env(safe-area-inset-top, 0px)) 20px calc(40px + env(safe-area-inset-bottom, 0px)); box-sizing: border-box; display: flex; flex-direction: column; gap: 18px">
 <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 48px">
 <h2 id="kalender-titel" style="margin: 0; font-size: 28px; font-weight: 600">Heiligenkalender</h2>
 <button type="button" onClick="{{closeCalendar}}" aria-label="Heiligenkalender schließen" style="width: 46px; height: 46px; display: flex; align-items: center; justify-content: center; border: 1px solid {{c.ink}}; border-radius: 8px; background: {{c.card}}; color: {{c.ink}}; cursor: pointer">

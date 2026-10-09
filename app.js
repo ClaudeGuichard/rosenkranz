@@ -573,7 +573,7 @@ var RK_NAV = window.RK_NAV = {
     var u = {};
     if (!!S.prayer !== wantPrayer) u.prayer = wantPrayer;
     if (!!S.calOpen !== wantCal) { u.calOpen = wantCal; if (wantCal) u.calMonth = new Date().getMonth(); }
-    if (Object.keys(u).length) { try { window.scrollTo(0, 0); } catch (e) {} m.setState(u); }
+    if (Object.keys(u).length) m.setState(u);
   }
 };
 window.addEventListener('popstate', function () { RK_NAV.sync(); });
@@ -987,7 +987,7 @@ class Component extends DCLogic {
     return {
       c: c,
       prayerOpen: !!S.prayer,
-      openPrayer: function () { try { window.scrollTo(0, 0); } catch (e) {} RK_NAV.go('gebet'); self.setState({ prayer: true }); },
+      openPrayer: function () { RK_NAV.go('gebet'); self.setState({ prayer: true }); },
       closePrayer: function () { RK_NAV.leave('gebet'); self.setState({ prayer: false }); },
       mode: mode, sel: sel, themePref: themePref, litOn: litOn, season: season,
       pronAttr: pronOn ? pronStyle : 'aus',
@@ -999,7 +999,7 @@ class Component extends DCLogic {
       heroImg: { src: hv[0], alt: hv[1] },
       saint: dayInfo(now.getMonth(), now.getDate()),
       calendarOpen: calOpen,
-      openCalendar: function () { try { window.scrollTo(0, 0); } catch (e) {} RK_NAV.go('kalender'); self.setState({ calOpen: true, calMonth: now.getMonth() }); },
+      openCalendar: function () { RK_NAV.go('kalender'); self.setState({ calOpen: true, calMonth: now.getMonth() }); },
       closeCalendar: function () { RK_NAV.leave('kalender'); self.setState({ calOpen: false }); },
       prevMonth: function () { self.setState({ calMonth: (calMonth + 11) % 12 }); },
       nextMonth: function () { self.setState({ calMonth: (calMonth + 1) % 12 }); },
