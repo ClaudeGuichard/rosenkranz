@@ -698,7 +698,7 @@ function litDayName(date) {
 // Schriftstellen je Geheimnis: vollständige Erzählabschnitte rund um die Kernverse
 // der Rosenkranzseiten des Vatikans und der US-Bischofskonferenz
 var BIBEL = {
- gaudiosa: ['Lk 1,26-38', 'Lk 1,39-56', 'Lk 2,1-20', 'Lk 2,22-40', 'Lk 2,41-52'],
+ gaudiosa: ['Lk 1,26-38', 'Lk 1,39-56', 'Lk 2,1-20', 'Lk 2,21-40', 'Lk 2,41-52'],
  luminosa: ['Mt 3,13-17', 'Joh 2,1-11', 'Mk 1,14-15', 'Mt 17,1-9', 'Mt 26,26-29'],
  dolorosa: ['Mt 26,36-46', 'Mk 15,6-15', 'Mt 27,27-31', 'Lk 23,26-32', 'Lk 23,33-49'],
  gloriosa: ['Lk 24,1-12', 'Apg 1,6-11', 'Apg 2,1-13', 'Lk 1,46-55 · 1 Kor 15,20-26', 'Offb 12,1-6']
@@ -707,14 +707,14 @@ var BIBEL = {
 // Sir und Jdt in Vulgata-Zählung belassen). Stellen, die schon in der Hauptstelle stehen, sind entfernt.
 // Lichtreiche: Stellen aus Rosarium Virginis Mariae 21, auf der Startseite nur als Gesamtverweis genannt
 var BIBEL_MORE = {
- gaudiosa: ['Mt 1,18', '', '1 Kor 15,45-48', 'Lk 2,21', ''],
+ gaudiosa: ['Mt 1,18', '', '1 Kor 15,45-48', '', ''],
  luminosa: ['2 Kor 5,21; Mt 3,17 par.', 'Joh 2,1-12', 'Mk 1,15; Mk 2,3-13; Lk 7,47-48; Joh 20,22-23', 'Lk 9,35 par.', 'Joh 13,1'],
- dolorosa: ['Mt 26,47-57; Mk 14,32-52; Lk 22,39-54; Joh 18,1-12', 'Mt 27,26; Joh 19,1; Weish 2,12-20; Jes 50,6; 53,5',
-   'Mk 15,17-20; Joh 19,2-8; Jes 63,2', 'Mt 27,32-33; Mk 15,20-22; Lk 9,22-26; 14,27; Joh 19,16-22',
+ dolorosa: ['Mt 26,47-57; Mk 14,32-52; Lk 22,39-54; Joh 18,1-12', 'Mt 27,26; Joh 19,1; Weisheit 2,12-20; Jesaja 50,6; 53,5',
+   'Mk 15,17-20; Joh 19,2-8; Jesaja 63,2', 'Mt 27,32-33; Mk 15,20-22; Lk 9,22-26; 14,27; Joh 19,16-22',
    'Mt 27,33-53; 24,13; Mk 15,24-40; Lk 6,27-35; Joh 19,23-30; 14,6; 10,17; Ps 22,2.9-19'],
  gloriosa: ['Mt 27,62-65; 28,1-10; Mk 16,1-16; Lk 24,13-35; Joh 20,1-31', 'Mk 16,19; Lk 24,46-53; Röm 8,34',
-   'Apg 1,13-14; 2,14-42; Hebr 3,7-8; 1 Kor 2,12-15; Röm 8,7-13', 'Hld 2,10; 6,9; Ps 16,10; 45,10-12.14; 132,8',
-   'Offb 11,19; Sir 24,23-31 (Vg); Jdt 16,10; 13,22-23 (Vg); Hld 6,10']
+   'Apg 1,13-14; 2,14-42; Hebr 3,7-8; 1 Kor 2,12-15; Röm 8,7-13', 'Hohelied 2,10; 6,9; Ps 16,10; 45,10-12.14; 132,8',
+   'Offb 11,19; Jesus Sirach 24,23-31 (Vulgata); Judit 16,10; 13,22-23 (Vulgata); Hohelied 6,10']
 };
 var MYST_STRESS = {
  gaudiosa: ['Annuntiátio', 'Visitátio', 'Natívitas', 'Praesentátio', 'Invéntio in Témplo'],
