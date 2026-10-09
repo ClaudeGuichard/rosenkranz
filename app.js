@@ -295,7 +295,7 @@ var TX = {
 };
 var OPEN_INS = {
   de: ['Jesus, der in uns den Glauben vermehre.', 'Jesus, der in uns die Hoffnung stärke.', 'Jesus, der in uns die Liebe entzünde.'],
-  la: ['qui adáugeat nóbis fídem.', 'qui corróboret nóbis spem.', 'qui perfíciat nóbis caritátem.']
+  laIntro: 'Ad augméntum fídei, spéi et caritátis.'
 };
 var OPEN_VIRT = ['Glaube', 'Hoffnung', 'Liebe'];
 var DEC_DE = {
@@ -342,6 +342,7 @@ function buildSteps(myst, mode) {
   S.push({ part: 'open', key: 'pater', de: 'Vaterunser', la: 'Pater Noster', hint: 'An der ersten großen Perle.' });
   for (var o = 0; o < 3; o++) S.push({ part: 'open', key: 'ave', open: o, de: 'Ave Maria', la: 'Ave Maria', hint: 'An der ' + ['ersten', 'zweiten', 'dritten'][o] + ' der drei kleinen Perlen bittest du um ' + ['den Glauben', 'die Hoffnung', 'die Liebe'][o] + '.' });
   S.push({ part: 'open', key: 'gloria', de: 'Ehre sei dem Vater', la: 'Gloria Patri', hint: 'Vor der nächsten großen Perle.' });
+  S.push({ part: 'open', key: 'fatima', de: 'Fatima-Gebet', la: 'Domine Iesu', hint: 'Das Gebet, um das Maria in Fatima gebeten hat. Danach beginnt das erste Gesätz.' });
   for (var d = 0; d < 5; d++) {
     S.push({ part: 'dec', dec: d, key: 'ansage', de: 'Geheimnis', la: 'Mysterium', hint: 'Bevor du betest: Lies die Bibelstelle oder betrachte das Bild in Ruhe. Beim Beten der Ave gehst du dann mit diesem Geheimnis im Herzen weiter.' });
     S.push({ part: 'dec', dec: d, key: 'pater', de: 'Vaterunser', la: 'Pater Noster', hint: 'An der großen Perle.' });
@@ -470,8 +471,9 @@ class Component extends DCLogic {
       var B = TX.aveB[lang].map(function (l) { return mk(l, false); });
       if (s.part === 'open') {
         var oi = s.open;
-        if (la) { A[3] = mk('et benedíctus frúctus véntris túi, Iésus,', false); A.push(mk(OPEN_INS.la[oi], true)); }
-        else A.push(mk(OPEN_INS.de[oi], true));
+        // Latein: schlichtes Ave; vor dem ersten steht die Meinung (nach prayinglatin.com)
+        if (!la) A.push(mk(OPEN_INS.de[oi], true));
+        else if (oi === 0) A.unshift(mk(OPEN_INS.laIntro, true));
       } else if (!la) {
         A.push(mk('Jesus, ' + DEC_DE[m][s.dec] + '.', true));
       }
@@ -486,7 +488,8 @@ class Component extends DCLogic {
     var longText = totalChars > 320;
     var flow = longText && !(la && pronMode !== 'aus');
     var beginner = mode === 'anf';
-    var showText = beginner || !S.hideText;
+    // Gebetstext immer sichtbar; wer ohne Text beten will, nimmt den Modus Betrachtung
+    var showText = true;
     var section = s.part === 'open' ? 'Eröffnung' : (s.part === 'close' ? 'Abschluss' : (s.dec + 1) + '. Gesätz · ' + NAME_DE[m][s.dec]);
     var setTitle = { gaudiosa: 'Die freudenreichen Geheimnisse', luminosa: 'Die lichtreichen Geheimnisse', dolorosa: 'Die schmerzhaften Geheimnisse', gloriosa: 'Die glorreichen Geheimnisse' }[m];
     var key = s.part === 'dec' ? GRP[m] + '-' + (s.dec + 1) + '-' + variant : '';
@@ -529,7 +532,7 @@ class Component extends DCLogic {
       mystSize: betr ? '26px' : '20px',
       lines: lines,
       lineGap: (la && pronMode !== 'aus') ? '8px' : '0px',
-      canToggleText: !beginner && !betr && s.key !== 'ansage',
+      canToggleText: false,
       toggleText: function () { self.setState({ hideText: !S.hideText }); },
       textChecked: S.hideText ? 'false' : 'true',
       textTrack: S.hideText ? (dark ? '#5A544B' : '#B8AFA2') : c.accentFill,
@@ -553,7 +556,7 @@ class Component extends DCLogic {
 }
 
 return Component;
-})(), ["hideText"]);
+})(), []);
 DC.register('Main', 'tpl-Main', (function () {
 var RK_NAV = window.RK_NAV = {
   main: null,
@@ -775,7 +778,7 @@ class Component extends DCLogic {
         modeBetr: 'Betrachtung',
         hintBetr: 'Still: nur die Geheimnisse mit ihren Bildern und Perlen zum Zählen, ohne Gebetstexte.',
         hintAnf: 'Geführt: alle Gebete im vollen Wortlaut, mit Hinweisen zu jedem Schritt.',
-        hintFort: 'Kompakt: Gebete ohne Erklärungen. Die Texte lassen sich beim Beten ausblenden.',
+        hintFort: 'Kompakt: alle Gebete im Wortlaut, ohne Erklärungen.',
         saintHeading: 'Heiliger des Tages',
         allHeading: 'Alle Geheimnisse',
         todayTag: 'Heute'
