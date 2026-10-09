@@ -195,6 +195,9 @@ button{touch-action:manipulation}
 </li>
 </sc-for>
 </ol>
+<sc-if value="{{hasSetNote}}" hint-placeholder-val="{{ false }}">
+<p style="margin: 0; font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 13px; line-height: 1.4; color: {{c.muted}}">{{setNote}}</p>
+</sc-if>
 <sc-if value="{{isBeginner}}" hint-placeholder-val="{{ true }}">
 <p style="margin: 0; padding-top: 14px; border-top: 1px solid {{c.rule2}}; font-size: 17px; line-height: 1.45; color: {{c.muted}}">{{t.decadeHelp}}</p>
 </sc-if>

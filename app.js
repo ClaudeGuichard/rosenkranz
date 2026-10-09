@@ -544,7 +544,7 @@ var RK_NAV = window.RK_NAV = {
   leave: function (name) {
     if (location.hash !== '#' + name) return;
     if (this.pushed) { this.pushed = false; history.back(); }
-    else { try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {} }
+    else { try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {} try { window.dispatchEvent(new Event('rk-nav')); } catch (e) {} }
   },
   sync: function () {
     var m = this.main; if (!m) return;
@@ -887,7 +887,7 @@ class Component extends DCLogic {
       decades: ((lang === 'la' && trad && TRAD[sel]) ? TRAD[sel] : heroData.decades).map(function (txt, i) {
         var stressed = (lang === 'la') ? ((trad && TRAD_STRESS[sel]) ? TRAD_STRESS[sel][i] : MYST_STRESS[sel][i]) : '';
         var showPron = lang === 'la' && pronOn && !!stressed;
-        return { num: nums[i], text: txt, hasPron: showPron, pron: showPron ? pron(stressed, pronStyle) : '', ref: BIBEL[sel][i], hasMore: !!BIBEL_MORE[sel][i], more: BIBEL_MORE[sel][i] ? (sel === 'luminosa' ? 'Johannes Paul II., Rosarium Virginis Mariae 21: ' : 'Weitere Stellen: ') + BIBEL_MORE[sel][i] : '' };
+        return { num: nums[i], text: txt, hasPron: showPron, pron: showPron ? pron(stressed, pronStyle) : '', ref: BIBEL[sel][i], hasMore: sel !== 'luminosa' && !!BIBEL_MORE[sel][i], more: BIBEL_MORE[sel][i] ? 'Weitere Stellen: ' + BIBEL_MORE[sel][i] : '' };
       })
     };
 
@@ -1018,6 +1018,8 @@ class Component extends DCLogic {
         'Tippe auf „App installieren“ oder „Zum Startbildschirm hinzufügen“ und bestätige.'
       ], offlineText: window.__rkOfflineText || '', hasOffline: !!window.__rkOfflineText,
       heroLabel: sel === todayKey ? t.today : t.selected,
+      hasSetNote: sel === 'luminosa',
+      setNote: 'Die lichtreichen Geheimnisse nach Johannes Paul II., Rosarium Virginis Mariae, Nr. 21.',
       hero: hero,
       mysteries: mysteries
     };
@@ -1088,6 +1090,27 @@ RK_NAV.sync();
     });
   }
   navigator.serviceWorker.addEventListener('message', function (e) { if (e.data && e.data.type === 'progress') recount(); });
+  // Neue Version sofort übernehmen: Seite einmal neu laden, aber nie mitten im Gebet
+  var hadController = !!navigator.serviceWorker.controller, pendingReload = false;
+  function reloadIfIdle() {
+    if (location.hash === '#gebet') { pendingReload = true; return; }
+    pendingReload = false;
+    location.reload();
+  }
+  navigator.serviceWorker.addEventListener('controllerchange', function () { if (hadController) reloadIfIdle(); });
+  window.addEventListener('hashchange', function () { if (pendingReload && location.hash !== '#gebet') reloadIfIdle(); });
+  window.addEventListener('popstate', function () { if (pendingReload && location.hash !== '#gebet') reloadIfIdle(); });
+  window.addEventListener('rk-nav', function () { if (pendingReload && location.hash !== '#gebet') reloadIfIdle(); });
+  // Neue Version sofort übernehmen: Seite einmal neu laden, aber nie mitten im Gebet
+  var hadController = !!navigator.serviceWorker.controller, pendingReload = false;
+  function reloadIfIdle() {
+    if (location.hash === '#gebet') { pendingReload = true; return; }
+    pendingReload = false;
+    location.reload();
+  }
+  navigator.serviceWorker.addEventListener('controllerchange', function () { if (hadController) reloadIfIdle(); });
+  window.addEventListener('hashchange', function () { if (pendingReload && location.hash !== '#gebet') reloadIfIdle(); });
+  window.addEventListener('popstate', function () { if (pendingReload && location.hash !== '#gebet') reloadIfIdle(); });
   window.addEventListener('load', function () {
     navigator.serviceWorker.register('sw.js').catch(function () {});
     recount();
@@ -1100,6 +1123,8 @@ RK_NAV.sync();
   window.addEventListener('online', fillFromPage);
   document.addEventListener('visibilitychange', function () {
     if (document.visibilityState !== 'visible') return;
+    navigator.serviceWorker.getRegistration().then(function (r) { if (r) r.update(); }).catch(function () {});
+    navigator.serviceWorker.getRegistration().then(function (r) { if (r) r.update(); }).catch(function () {});
     if (navigator.serviceWorker.controller) navigator.serviceWorker.controller.postMessage('fill');
     setTimeout(fillFromPage, 1500);
   });
