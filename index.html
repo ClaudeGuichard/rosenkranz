@@ -1,0 +1,453 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Rosenkranz</title>
+<meta name="description" content="Den Rosenkranz beten, auf Deutsch und Latein.">
+<meta name="theme-color" content="#F8F6F1">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Rosenkranz">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+<link rel="icon" type="image/svg+xml" href="icons/icon.svg">
+<style>
+/* eb-garamond-latin-ext-400-normal */
+@font-face {
+  font-family: 'EB Garamond';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400;
+  src: url(fonts/eb-garamond-latin-ext-400-normal.woff2) format('woff2');
+  unicode-range: U+0100-02AF,U+0304,U+0308,U+0329,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;
+}
+/* eb-garamond-latin-400-normal */
+@font-face {
+  font-family: 'EB Garamond';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400;
+  src: url(fonts/eb-garamond-latin-400-normal.woff2) format('woff2');
+  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+2074,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+/* eb-garamond-latin-ext-500-normal */
+@font-face {
+  font-family: 'EB Garamond';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 500;
+  src: url(fonts/eb-garamond-latin-ext-500-normal.woff2) format('woff2');
+  unicode-range: U+0100-02AF,U+0304,U+0308,U+0329,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;
+}
+/* eb-garamond-latin-500-normal */
+@font-face {
+  font-family: 'EB Garamond';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 500;
+  src: url(fonts/eb-garamond-latin-500-normal.woff2) format('woff2');
+  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+2074,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+/* eb-garamond-latin-ext-600-normal */
+@font-face {
+  font-family: 'EB Garamond';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 600;
+  src: url(fonts/eb-garamond-latin-ext-600-normal.woff2) format('woff2');
+  unicode-range: U+0100-02AF,U+0304,U+0308,U+0329,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;
+}
+/* eb-garamond-latin-600-normal */
+@font-face {
+  font-family: 'EB Garamond';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 600;
+  src: url(fonts/eb-garamond-latin-600-normal.woff2) format('woff2');
+  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+2074,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+/* eb-garamond-latin-ext-400-italic */
+@font-face {
+  font-family: 'EB Garamond';
+  font-style: italic;
+  font-display: swap;
+  font-weight: 400;
+  src: url(fonts/eb-garamond-latin-ext-400-italic.woff2) format('woff2');
+  unicode-range: U+0100-02AF,U+0304,U+0308,U+0329,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;
+}
+/* eb-garamond-latin-400-italic */
+@font-face {
+  font-family: 'EB Garamond';
+  font-style: italic;
+  font-display: swap;
+  font-weight: 400;
+  src: url(fonts/eb-garamond-latin-400-italic.woff2) format('woff2');
+  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+2074,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+/* source-sans-3-latin-ext-400-normal */
+@font-face {
+  font-family: 'Source Sans 3';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400;
+  src: url(fonts/source-sans-3-latin-ext-400-normal.woff2) format('woff2');
+  unicode-range: U+0100-02AF,U+0304,U+0308,U+0329,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;
+}
+/* source-sans-3-latin-400-normal */
+@font-face {
+  font-family: 'Source Sans 3';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400;
+  src: url(fonts/source-sans-3-latin-400-normal.woff2) format('woff2');
+  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+2074,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+/* source-sans-3-latin-ext-600-normal */
+@font-face {
+  font-family: 'Source Sans 3';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 600;
+  src: url(fonts/source-sans-3-latin-ext-600-normal.woff2) format('woff2');
+  unicode-range: U+0100-02AF,U+0304,U+0308,U+0329,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;
+}
+/* source-sans-3-latin-600-normal */
+@font-face {
+  font-family: 'Source Sans 3';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 600;
+  src: url(fonts/source-sans-3-latin-600-normal.woff2) format('woff2');
+  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+2074,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+:root{--bg:#F8F6F1}
+html,body{margin:0;background:var(--bg)}
+#app{display:flex;justify-content:center}
+button,a{-webkit-tap-highlight-color:transparent}
+button{touch-action:manipulation}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<template id="tpl-Main">
+
+<div lang="de" style="width: 100%; max-width: 480px; min-height: 100vh; box-sizing: border-box; background: {{c.paper}}; color: {{c.ink}}; font-family: 'EB Garamond', Garamond, 'Times New Roman', serif; display: flex; flex-direction: column; gap: 28px; padding: calc(20px + env(safe-area-inset-top, 0px)) 20px calc(40px + env(safe-area-inset-bottom, 0px)); position: relative">
+
+<header style="display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 48px">
+<span style="font-size: 28px; font-weight: 600; letter-spacing: 0.02em">{{t.app}}</span>
+<div style="display: flex; align-items: center; gap: 8px">
+<div aria-label="Sprache der Gebete" style="display: flex; border: 1px solid {{c.ink}}; border-radius: 8px; overflow: hidden">
+<sc-for list="{{langs}}" as="o" hint-placeholder-count="2">
+<button type="button" onClick="{{o.pick}}" aria-pressed="{{o.pressed}}" style="min-width: 46px; height: 44px; padding: 0 8px; border: 0; font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 14px; font-weight: 600; letter-spacing: 0.08em; background: {{o.bg}}; color: {{o.fg}}; cursor: pointer">{{o.label}}</button>
+</sc-for>
+</div>
+<button type="button" onClick="{{openSettings}}" aria-label="Einstellungen" style="width: 46px; height: 46px; display: flex; align-items: center; justify-content: center; border: 1px solid {{c.ink}}; border-radius: 8px; background: {{c.card}}; color: {{c.ink}}; cursor: pointer">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"></path><circle cx="16" cy="7" r="2"></circle><circle cx="10" cy="17" r="2"></circle></svg>
+</button>
+</div>
+</header>
+
+<section style="display: flex; flex-direction: column; gap: 10px">
+<span style="font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 13px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: {{c.muted}}">{{dateLabel}}</span>
+<span style="font-size: 22px; font-weight: 500; line-height: 1.25">{{litDayLabel}}</span>
+<div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap">
+<span style="display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border: 1px solid {{c.rule}}; border-radius: 999px; background: {{c.card}}; font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 14px; font-weight: 600">
+<span style="width: 10px; height: 10px; border-radius: 50%; background: {{seasonColor}}"></span>
+<span>{{seasonName}}</span>
+</span>
+<span style="font-style: italic; font-size: 16px; color: {{c.muted}}">{{seasonPlaceholder}}</span>
+</div>
+</section>
+
+<section style="display: flex; flex-direction: column; gap: 10px">
+<div aria-label="Modus" style="display: flex; border: 1px solid {{c.ink}}; border-radius: 8px; overflow: hidden">
+<sc-for list="{{modes}}" as="o" hint-placeholder-count="2">
+<button type="button" onClick="{{o.pick}}" aria-pressed="{{o.pressed}}" style="flex: 1 1 0; height: 44px; border: 0; font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 15px; font-weight: 600; background: {{o.bg}}; color: {{o.fg}}; cursor: pointer">{{o.label}}</button>
+</sc-for>
+</div>
+<p style="margin: 0; font-size: 17px; line-height: 1.4; color: {{c.muted}}">{{modeHint}}</p>
+</section>
+
+<section aria-labelledby="geheimnis-titel" style="background: {{c.card}}; border: 1px solid {{c.rule}}; border-radius: 10px; padding: 24px 20px; display: flex; flex-direction: column; gap: 18px">
+<figure style="margin: -24px -20px 0; display: flex; flex-direction: column; gap: 6px">
+<img src="{{heroImg.src}}" alt="{{heroImg.alt}}" style="width: 100%; height: 220px; object-fit: cover; border-radius: 10px 10px 0 0; display: block">
+<figcaption style="padding: 0 20px; font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 12px; color: {{c.muted}}">{{heroImg.alt}}</figcaption>
+</figure>
+<span style="font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: {{c.accentText}}">{{heroLabel}}</span>
+<h1 id="geheimnis-titel" style="margin: 0; font-size: 32px; line-height: 1.1; font-weight: 500"><span style="color: {{c.accentText}}; font-size: 46px; font-weight: 600; line-height: 0.9">{{hero.initial}}</span>{{hero.rest}}</h1>
+<ol style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 12px">
+<sc-for list="{{hero.decades}}" as="d" hint-placeholder-count="5">
+<li style="display: grid; grid-template-columns: 36px minmax(0, 1fr); gap: 8px; align-items: baseline; font-size: 19px; line-height: 1.35">
+<span style="color: {{c.accentText}}; font-weight: 600; font-size: 16px; letter-spacing: 0.04em">{{d.num}}</span>
+<span style="display: flex; flex-direction: column; gap: 2px">
+<span>{{d.text}}</span>
+<sc-if value="{{d.hasPron}}" hint-placeholder-val="{{ false }}">
+<span style="font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 14px; color: {{c.muted}}">{{d.pron}}</span>
+</sc-if>
+<span style="font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 12px; letter-spacing: 0.04em; color: {{c.muted}}">{{d.ref}}</span>
+<sc-if value="{{d.hasMore}}" hint-placeholder-val="{{ false }}">
+<span style="font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 12px; line-height: 1.4; color: {{c.muted}}">{{d.more}}</span>
+</sc-if>
+</span>
+</li>
+</sc-for>
+</ol>
+<sc-if value="{{isBeginner}}" hint-placeholder-val="{{ true }}">
+<p style="margin: 0; padding-top: 14px; border-top: 1px solid {{c.rule2}}; font-size: 17px; line-height: 1.45; color: {{c.muted}}">{{t.decadeHelp}}</p>
+</sc-if>
+<button type="button" onClick="{{openPrayer}}" style="height: 52px; border: 0; border-radius: 8px; background: {{c.accentFill}}; color: #FFFFFF; font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 16px; font-weight: 600; letter-spacing: 0.04em; cursor: pointer">{{t.start}}</button>
+</section>
+
+<section style="display: flex; flex-direction: column; gap: 12px">
+<h2 style="margin: 0; font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: {{c.muted}}">{{t.saintHeading}}</h2>
+<div style="background: {{c.card}}; border: 1px solid {{c.rule}}; border-radius: 10px; padding: 20px; display: flex; flex-direction: column; gap: 16px">
+<div style="display: flex; gap: 16px; align-items: flex-start">
+<div aria-hidden="true" style="flex: none; width: 56px; height: 56px; border-radius: 50%; border: 1px solid {{c.rule}}; background: {{c.paper}}; display: flex; align-items: center; justify-content: center; color: {{c.gold}}">
+<svg width="30" height="30" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="16" cy="16" r="12"></circle><path d="M16 9v14M10 14h12"></path></svg>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px; min-width: 0">
+<span style="font-size: 25px; font-weight: 600; line-height: 1.15">{{saint.name}}</span>
+<span style="font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 14px; color: {{c.muted}}">{{saint.rank}}</span>
+<sc-if value="{{saint.hasOthers}}" hint-placeholder-val="{{ false }}">
+<span style="margin-top: 4px; font-size: 17px; line-height: 1.4; color: {{c.ink}}">Außerdem: {{saint.others}}</span>
+</sc-if>
+</div>
+</div>
+<button type="button" onClick="{{openCalendar}}" style="align-self: flex-start; min-height: 44px; padding: 0 16px; border: 1px solid {{c.ink}}; border-radius: 8px; background: {{c.card}}; color: {{c.ink}}; font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 15px; font-weight: 600; cursor: pointer">Heiligenkalender ansehen</button>
+</div>
+</section>
+
+<section style="display: flex; flex-direction: column; gap: 12px">
+<h2 style="margin: 0; font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: {{c.muted}}">{{t.allHeading}}</h2>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<sc-for list="{{mysteries}}" as="m" hint-placeholder-count="4">
+<button type="button" onClick="{{m.pick}}" aria-pressed="{{m.pressed}}" style="width: 100%; min-height: 68px; box-sizing: border-box; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px; text-align: left; background: {{c.card}}; border: 1px solid {{m.borderColor}}; box-shadow: {{m.ring}}; border-radius: 10px; color: {{c.ink}}; font-family: inherit; cursor: pointer">
+<span style="display: flex; flex-direction: column; gap: 4px; min-width: 0">
+<span style="font-size: 21px; font-weight: 500; line-height: 1.2">{{m.name}}</span>
+<span style="font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 13px; color: {{c.muted}}">{{m.days}}</span>
+</span>
+<sc-if value="{{m.isToday}}" hint-placeholder-val="{{ false }}">
+<span style="flex: none; padding: 4px 10px; border-radius: 999px; background: {{c.accentFill}}; color: #FFFFFF; font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase">{{t.todayTag}}</span>
+</sc-if>
+</button>
+</sc-for>
+</div>
+</section>
+
+<sc-if value="{{prayerOpen}}" hint-placeholder-val="{{ false }}">
+<div style="position: fixed; top: 0; right: 0; bottom: 0; left: 0; z-index: 20; display: flex; justify-content: center; box-sizing: border-box; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); background: {{c.paper}}">
+<dc-import name="Gebet" vollbild="ja" sprache="{{lang}}" modus="{{mode}}" geheimnis="{{sel}}" erscheinungsbild="{{themePref}}" liturgische-farbe="{{litOn}}" season="{{season}}" aussprache="{{pronAttr}}" aussprache-stil="{{pronStyle}}" on-close="{{closePrayer}}" hint-size="390px,844px"></dc-import>
+</div>
+</sc-if>
+
+<sc-if value="{{calendarOpen}}" hint-placeholder-val="{{ false }}">
+<div role="dialog" aria-modal="true" aria-labelledby="kalender-titel" style="position: fixed; z-index: 20; top: 0; right: 0; bottom: 0; left: 0; background: {{c.paper}}; overflow-y: auto; padding: calc(20px + env(safe-area-inset-top, 0px)) 20px calc(40px + env(safe-area-inset-bottom, 0px)); box-sizing: border-box; display: flex; flex-direction: column; gap: 18px">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 48px">
+<h2 id="kalender-titel" style="margin: 0; font-size: 28px; font-weight: 600">Heiligenkalender</h2>
+<button type="button" onClick="{{closeCalendar}}" aria-label="Heiligenkalender schließen" style="width: 46px; height: 46px; display: flex; align-items: center; justify-content: center; border: 1px solid {{c.ink}}; border-radius: 8px; background: {{c.card}}; color: {{c.ink}}; cursor: pointer">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+</button>
+</div>
+<span style="font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 13px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: {{c.muted}}">{{calSourceLabel}}</span>
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; border-top: 1px solid {{c.rule}}; border-bottom: 1px solid {{c.rule}}; padding: 6px 0">
+<button type="button" onClick="{{prevMonth}}" aria-label="Vorheriger Monat" style="width: 46px; height: 46px; display: flex; align-items: center; justify-content: center; border: 0; background: transparent; color: {{c.ink}}; cursor: pointer">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"></path></svg>
+</button>
+<span style="font-size: 24px; font-weight: 500">{{monthLabel}}</span>
+<button type="button" onClick="{{nextMonth}}" aria-label="Nächster Monat" style="width: 46px; height: 46px; display: flex; align-items: center; justify-content: center; border: 0; background: transparent; color: {{c.ink}}; cursor: pointer">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"></path></svg>
+</button>
+</div>
+<ol style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column">
+<sc-for list="{{monthDays}}" as="d" hint-placeholder-count="10">
+<li style="display: grid; grid-template-columns: 52px minmax(0, 1fr); gap: 10px; padding: 12px 8px; border-bottom: 1px solid {{c.rule2}}; background: {{d.bg}}; border-radius: 6px">
+<span style="display: flex; flex-direction: column; align-items: flex-start; gap: 0">
+<span style="font-size: 24px; font-weight: 600; line-height: 1; color: {{d.numColor}}">{{d.day}}</span>
+<span style="font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 12px; color: {{c.muted}}">{{d.wd}}</span>
+</span>
+<span style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
+<span style="font-size: 18px; line-height: 1.3">{{d.name}}</span>
+<span style="font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 12px; color: {{c.muted}}">{{d.rank}}</span>
+<sc-if value="{{d.hasOthers}}" hint-placeholder-val="{{ false }}">
+<span style="font-size: 15px; line-height: 1.35; color: {{c.muted}}">Außerdem: {{d.others}}</span>
+</sc-if>
+</span>
+</li>
+</sc-for>
+</ol>
+</div>
+</sc-if>
+
+<sc-if value="{{settingsOpen}}" hint-placeholder-val="{{ false }}">
+<div style="position: absolute; top: 0; right: 0; bottom: 0; left: 0; background: rgba(29, 27, 24, 0.45); display: flex; flex-direction: column; align-items: stretch; padding: calc(76px + env(safe-area-inset-top, 0px)) 12px calc(12px + env(safe-area-inset-bottom, 0px)); box-sizing: border-box; overflow-y: auto">
+<section role="dialog" aria-modal="true" aria-labelledby="einstellungen-titel" style="background: {{c.paper}}; border-radius: 12px; padding: 22px 20px 20px; display: flex; flex-direction: column; gap: 6px">
+<h2 id="einstellungen-titel" style="margin: 0 0 8px; font-size: 26px; font-weight: 600">Einstellungen</h2>
+<div style="display: flex; flex-direction: column; gap: 8px; padding: 4px 0 14px">
+<span id="opt-erscheinung" style="font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 16px; font-weight: 600">Erscheinungsbild</span>
+<div role="group" aria-labelledby="opt-erscheinung" style="display: flex; border: 1px solid {{c.ink}}; border-radius: 8px; overflow: hidden">
+<sc-for list="{{themes}}" as="o" hint-placeholder-count="3">
+<button type="button" onClick="{{o.pick}}" aria-pressed="{{o.pressed}}" style="flex: 1 1 0; height: 44px; border: 0; font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 15px; font-weight: 600; background: {{o.bg}}; color: {{o.fg}}; cursor: pointer">{{o.label}}</button>
+</sc-for>
+</div>
+</div>
+<sc-for list="{{toggles}}" as="o" hint-placeholder-count="2">
+<div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; padding: 14px 0; border-top: 1px solid {{c.rule}}">
+<div style="display: flex; flex-direction: column; gap: 4px; min-width: 0">
+<span id="{{o.id}}" style="font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 16px; font-weight: 600">{{o.label}}</span>
+<span style="font-size: 16px; line-height: 1.4; color: {{c.muted}}">{{o.desc}}</span>
+</div>
+<button type="button" role="switch" aria-checked="{{o.checked}}" aria-labelledby="{{o.id}}" onClick="{{o.toggle}}" style="flex: none; width: 56px; height: 44px; padding: 6px 0; border: 0; background: transparent; cursor: pointer; display: flex; align-items: center">
+<span style="width: 56px; height: 32px; border-radius: 999px; background: {{o.track}}; display: flex; align-items: center; padding: 3px; box-sizing: border-box; justify-content: {{o.justify}}">
+<span style="width: 26px; height: 26px; border-radius: 50%; background: #FFFFFE; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25)"></span>
+</span>
+</button>
+</div>
+</sc-for>
+<sc-if value="{{ true }}" hint-placeholder-val="{{ true }}">
+<div style="display: flex; flex-direction: column; gap: 8px; padding: 14px 0 4px; border-top: 1px solid {{c.rule}}">
+<span id="opt-aussprachestil" style="font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 16px; font-weight: 600">Aussprachehilfe für LA+</span>
+<div role="group" aria-labelledby="opt-aussprachestil" style="display: flex; border: 1px solid {{c.ink}}; border-radius: 8px; overflow: hidden">
+<sc-for list="{{pronStyles}}" as="o" hint-placeholder-count="2">
+<button type="button" onClick="{{o.pick}}" aria-pressed="{{o.pressed}}" style="flex: 1 1 0; height: 44px; border: 0; font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 15px; font-weight: 600; background: {{o.bg}}; color: {{o.fg}}; cursor: pointer">{{o.label}}</button>
+</sc-for>
+</div>
+<span style="font-size: 16px; line-height: 1.4; color: {{c.muted}}">{{pronStyleHint}}</span>
+</div>
+</sc-if>
+<button type="button" onClick="{{closeSettings}}" style="margin-top: 8px; height: 48px; border: 0; border-radius: 8px; background: {{c.ink}}; color: {{c.paper}}; font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 16px; font-weight: 600; cursor: pointer">Fertig</button>
+</section>
+</div>
+</sc-if>
+
+</div>
+</template>
+<template id="tpl-Gebet">
+
+<div lang="de" style="width: {{rootW}}; height: {{rootH}}; box-sizing: border-box; background: {{c.paper}}; color: {{c.ink}}; font-family: 'EB Garamond', Garamond, 'Times New Roman', serif; display: flex; flex-direction: column; overflow: hidden">
+
+<header style="flex: none; display: flex; flex-direction: column; gap: 10px; padding: 14px 16px 10px; border-bottom: 1px solid {{c.rule}}">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 10px">
+<sc-if value="{{hasClose}}" hint-placeholder-val="{{ false }}">
+<button type="button" onClick="{{close}}" aria-label="Gebet beenden und zur Startseite" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border: 0; border-radius: 8px; background: transparent; color: {{c.ink}}; cursor: pointer">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+</button>
+</sc-if>
+<sc-if value="{{noClose}}" hint-placeholder-val="{{ true }}">
+<a href="Main.dc.html" aria-label="Gebet beenden und zur Startseite" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 8px; color: {{c.ink}}; text-decoration: none">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+</a>
+</sc-if>
+<span style="flex: 1 1 auto; min-width: 0; text-align: center; font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 13px; font-weight: 600; letter-spacing: 0.06em; color: {{c.muted}}">{{section}}</span>
+<button type="button" onClick="{{toggleLang}}" aria-label="Sprache der Gebete wechseln: Deutsch, Latein, Latein mit Aussprachehilfe" style="min-width: 52px; height: 44px; padding: 0 10px; border: 1px solid {{c.ink}}; border-radius: 8px; background: {{c.card}}; color: {{c.ink}}; font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 14px; font-weight: 600; letter-spacing: 0.08em; cursor: pointer">{{langLabel}}</button>
+</div>
+<div aria-hidden="true" style="height: 3px; border-radius: 2px; background: {{c.rule2}}; overflow: hidden">
+<div style="height: 3px; width: {{progress}}; background: {{c.accentFill}}"></div>
+</div>
+</header>
+
+<main data-gebet-main="1" style="flex: 1 1 auto; min-height: 0; overflow-y: auto; display: flex; flex-direction: column">
+<sc-if value="{{hasImage}}" hint-placeholder-val="{{ true }}">
+<figure style="margin: 0; flex: none; display: flex; flex-direction: column; gap: 4px">
+<img src="{{img.src}}" alt="{{img.alt}}" style="width: 100%; height: {{imgHeight}}; object-fit: cover; display: block">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 0 8px 0 16px">
+<figcaption style="min-width: 0; font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 11px; line-height: 1.35; color: {{c.muted}}">{{img.count}} · {{img.alt}}</figcaption>
+<button type="button" onClick="{{nextImage}}" style="flex: none; min-height: 44px; padding: 0 10px; border: 0; background: transparent; color: {{c.accentText}}; font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 13px; font-weight: 600; cursor: pointer">Anderes Bild</button>
+</div>
+</figure>
+</sc-if>
+<sc-if value="{{noImage}}" hint-placeholder-val="{{ false }}">
+<div style="flex: none; padding: 28px 20px 4px; display: flex; flex-direction: column; gap: 4px">
+<span style="font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: {{c.muted}}">{{partLabel}}</span>
+<span style="font-size: 24px; font-weight: 500; line-height: 1.15">{{setTitle}}</span>
+</div>
+</sc-if>
+
+<div style="padding: 18px 20px 24px; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; flex-direction: column; gap: 4px">
+<span style="font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: {{c.accentText}}">{{kicker}}</span>
+<sc-if value="{{hasMystLine}}" hint-placeholder-val="{{ true }}">
+<span style="font-size: {{mystSize}}; line-height: 1.3; font-style: italic">{{mystLine}}</span>
+</sc-if>
+</div>
+
+<sc-if value="{{canToggleText}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 2px 0 2px; border-top: 1px solid {{c.rule}}; border-bottom: 1px solid {{c.rule}}">
+<span id="schalter-text" style="font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 15px; font-weight: 600; color: {{c.muted}}">Gebetstext anzeigen</span>
+<button type="button" role="switch" aria-checked="{{textChecked}}" aria-labelledby="schalter-text" onClick="{{toggleText}}" style="flex: none; width: 56px; height: 44px; padding: 6px 0; border: 0; background: transparent; cursor: pointer; display: flex; align-items: center">
+<span style="width: 52px; height: 30px; border-radius: 999px; background: {{textTrack}}; display: flex; align-items: center; padding: 3px; box-sizing: border-box; justify-content: {{textJustify}}">
+<span style="width: 24px; height: 24px; border-radius: 50%; background: #FFFFFE; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25)"></span>
+</span>
+</button>
+</div>
+</sc-if>
+
+<sc-if value="{{showFlow}}" hint-placeholder-val="{{ false }}">
+<p style="margin: 0; font-size: 19px; line-height: 1.5; text-wrap: pretty"><sc-for list="{{lines}}" as="l" hint-placeholder-count="12"><span style="color: {{l.color}}; font-weight: {{l.weight}}">{{l.text}} </span></sc-for></p>
+</sc-if>
+<sc-if value="{{showLineList}}" hint-placeholder-val="{{ true }}">
+<div style="display: flex; flex-direction: column; gap: {{lineGap}}">
+<sc-for list="{{lines}}" as="l" hint-placeholder-count="6">
+<div style="display: flex; flex-direction: column; gap: 1px">
+<span style="font-size: {{lineSize}}; line-height: 1.35; color: {{l.color}}; font-weight: {{l.weight}}">{{l.text}}</span>
+<sc-if value="{{l.hasPron}}" hint-placeholder-val="{{ false }}">
+<span style="font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 14px; line-height: 1.35; color: {{c.muted}}">{{l.pron}}</span>
+</sc-if>
+</div>
+</sc-for>
+</div>
+</sc-if>
+
+<sc-if value="{{hasRef}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 8px; border: 1px solid {{c.rule}}; background: {{c.card}}">
+<svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="{{c.accentText}}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5C4 4.7 4.7 4 5.5 4H11v16H5.5C4.7 20 4 19.3 4 18.5z"></path><path d="M20 5.5c0-.8-.7-1.5-1.5-1.5H13v16h5.5c.8 0 1.5-.7 1.5-1.5z"></path></svg>
+<div style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
+<span style="font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: {{c.muted}}">Vor dem Beten lesen</span>
+<span style="font-size: 19px; line-height: 1.3">{{refName}} · {{refText}}</span>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{hasHint}}" hint-placeholder-val="{{ true }}">
+<p style="margin: 0; padding: 12px 14px; border-radius: 8px; background: {{c.card}}; border: 1px solid {{c.rule}}; font-size: 17px; line-height: 1.4; color: {{c.muted}}">{{hint}}</p>
+</sc-if>
+</div>
+</main>
+
+<footer style="flex: none; display: flex; flex-direction: column; gap: 12px; padding: 12px 16px 20px; border-top: 1px solid {{c.rule}}; background: {{c.paper}}">
+<sc-if value="{{isCounter}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: 8px">
+<div style="display: grid; grid-template-columns: 52px minmax(0, 1fr); gap: 10px">
+<button type="button" onClick="{{dec}}" aria-label="Ein Ave zurückzählen" style="height: 68px; border: 1px solid {{c.rule}}; border-radius: 8px; background: {{c.card}}; color: {{c.ink}}; font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 22px; cursor: pointer">−</button>
+<button type="button" onClick="{{inc}}" aria-label="{{beadLabel}}" style="height: 68px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 9px; border: 1.5px solid {{c.accentText}}; border-radius: 8px; background: {{counterBg}}; color: {{c.accentText}}; font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 15px; font-weight: 600; cursor: pointer">
+<span>{{counterLabel}}</span>
+<span aria-hidden="true" style="display: flex; gap: 7px">
+<sc-for list="{{beads}}" as="b" hint-placeholder-count="10">
+<span style="width: 13px; height: 13px; border-radius: 50%; box-sizing: border-box; border: 1.5px solid {{c.accentText}}; background: {{b.fill}}"></span>
+</sc-for>
+</span>
+</button>
+</div>
+</div>
+</sc-if>
+<div style="display: grid; grid-template-columns: 120px minmax(0, 1fr); gap: 10px">
+<button type="button" onClick="{{prev}}" style="height: 52px; border: 1px solid {{c.ink}}; border-radius: 8px; background: {{c.card}}; color: {{c.ink}}; font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 16px; font-weight: 600; cursor: pointer; opacity: {{prevOpacity}}">Zurück</button>
+<sc-if value="{{notLast}}" hint-placeholder-val="{{ true }}">
+<button type="button" onClick="{{next}}" style="height: 52px; border: 0; border-radius: 8px; background: {{c.accentFill}}; color: #FFFFFF; font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 16px; font-weight: 600; cursor: pointer">{{nextLabel}}</button>
+</sc-if>
+<sc-if value="{{lastClose}}" hint-placeholder-val="{{ false }}">
+<button type="button" onClick="{{close}}" style="height: 52px; border: 0; border-radius: 8px; background: {{c.accentFill}}; color: #FFFFFF; font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 16px; font-weight: 600; cursor: pointer">Amen · Beenden</button>
+</sc-if>
+<sc-if value="{{lastLink}}" hint-placeholder-val="{{ false }}">
+<a href="Main.dc.html" style="height: 52px; display: flex; align-items: center; justify-content: center; border-radius: 8px; background: {{c.accentFill}}; color: #FFFFFF; font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 16px; font-weight: 600; text-decoration: none">Amen · Beenden</a>
+</sc-if>
+</div>
+</footer>
+</div>
+</template>
+<noscript><p style="font-family:serif;padding:20px">Bitte JavaScript aktivieren, um die Rosenkranz-App zu nutzen.</p></noscript>
+<script src="app.js"></script>
+</body>
+</html>
