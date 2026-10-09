@@ -317,6 +317,7 @@ button{touch-action:manipulation}
 <span style="font-size: 16px; line-height: 1.4; color: {{c.muted}}">{{pronStyleHint}}</span>
 </div>
 </sc-if>
+<sc-if value="{{hasOffline}}"><div style="display: flex; flex-direction: column; gap: 4px; padding: 14px 0 4px; border-top: 1px solid {{c.rule}}"><span style="font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 16px; font-weight: 600">Offline</span><span role="status" style="font-size: 16px; line-height: 1.4; color: {{c.muted}}">{{offlineText}}</span></div></sc-if>
 <button type="button" onClick="{{closeSettings}}" style="margin-top: 8px; height: 48px; border: 0; border-radius: 8px; background: {{c.ink}}; color: {{c.paper}}; font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 16px; font-weight: 600; cursor: pointer">Fertig</button>
 </section>
 </div>

@@ -147,6 +147,7 @@
   }
 
   window.DC = {
+    refresh: function () { if (INST.__root) schedule(); },
     register: function (name, tplId, cls, persist) {
       var t = document.getElementById(tplId);
       REG[name] = { tpl: t.content, cls: cls, persist: persist || [] };
@@ -965,7 +966,7 @@ class Component extends DCLogic {
       litDayLabel: litDayLabel,
       seasonColor: s.color,
       seasonName: s.de,
-      seasonPlaceholder: '',
+      seasonPlaceholder: '', offlineText: window.__rkOfflineText || '', hasOffline: !!window.__rkOfflineText,
       heroLabel: sel === todayKey ? t.today : t.selected,
       hero: hero,
       mysteries: mysteries
@@ -990,7 +991,29 @@ DC.mount('Main', document.getElementById('app'));
   sync();
 })();
 
-// Offline-Betrieb
-if ('serviceWorker' in navigator && location.protocol !== 'file:') {
-  window.addEventListener('load', function () { navigator.serviceWorker.register('sw.js').catch(function () {}); });
-}
+// Offline-Betrieb: Grundgerüst sofort, Bilder nach und nach (auch über mehrere Starts)
+(function () {
+  if (!('serviceWorker' in navigator) || location.protocol === 'file:') return;
+  var IMGS = ["img/freud-1-a.jpg", "img/freud-1-b.jpg", "img/freud-1-c.jpg", "img/freud-2-a.jpg", "img/freud-2-b.jpg", "img/freud-2-c.jpg", "img/freud-3-a.jpg", "img/freud-3-b.jpg", "img/freud-3-c.jpg", "img/freud-4-a.jpg", "img/freud-4-b.jpg", "img/freud-4-c.jpg", "img/freud-5-a.jpg", "img/freud-5-b.jpg", "img/freud-5-c.jpg", "img/glor-1-a.jpg", "img/glor-1-b.jpg", "img/glor-1-c.jpg", "img/glor-2-a.jpg", "img/glor-2-b.jpg", "img/glor-2-c.jpg", "img/glor-3-a.jpg", "img/glor-3-b.jpg", "img/glor-3-c.jpg", "img/glor-4-a.jpg", "img/glor-4-b.jpg", "img/glor-4-c.jpg", "img/glor-5-a.jpg", "img/glor-5-b.jpg", "img/glor-5-c.jpg", "img/licht-1-a.jpg", "img/licht-1-b.jpg", "img/licht-1-c.jpg", "img/licht-2-a.jpg", "img/licht-2-b.jpg", "img/licht-2-c.jpg", "img/licht-3-a.jpg", "img/licht-3-b.jpg", "img/licht-3-c.jpg", "img/licht-4-a.jpg", "img/licht-4-b.jpg", "img/licht-4-c.jpg", "img/licht-5-a.jpg", "img/licht-5-b.jpg", "img/licht-5-c.jpg", "img/schmerz-1-a.jpg", "img/schmerz-1-b.jpg", "img/schmerz-1-c.jpg", "img/schmerz-2-a.jpg", "img/schmerz-2-b.jpg", "img/schmerz-2-c.jpg", "img/schmerz-3-a.jpg", "img/schmerz-3-b.jpg", "img/schmerz-3-c.jpg", "img/schmerz-4-a.jpg", "img/schmerz-4-b.jpg", "img/schmerz-4-c.jpg", "img/schmerz-5-a.jpg", "img/schmerz-5-b.jpg", "img/schmerz-5-c.jpg"];
+  function setText(t) { window.__rkOfflineText = t; DC.refresh(); }
+  function recount() {
+    if (!window.caches) return;
+    Promise.all(IMGS.map(function (u) { return caches.match(u); })).then(function (r) {
+      var n = r.filter(Boolean).length, total = IMGS.length;
+      setText(n === total
+        ? 'Die App und alle ' + total + ' Bilder sind auf diesem Gerät gespeichert. Sie funktioniert auch ohne Internet.'
+        : n + ' von ' + total + ' Bildern sind gespeichert. Die übrigen werden geladen, solange die App geöffnet und mit dem Internet verbunden ist.');
+    }).catch(function () {});
+  }
+  navigator.serviceWorker.addEventListener('message', function (e) { if (e.data && e.data.type === 'progress') recount(); });
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('sw.js').catch(function () {});
+    navigator.serviceWorker.ready.then(function (reg) {
+      recount();
+      if (reg.active) reg.active.postMessage('fill');
+    });
+  });
+  document.addEventListener('visibilitychange', function () {
+    if (document.visibilityState === 'visible' && navigator.serviceWorker.controller) navigator.serviceWorker.controller.postMessage('fill');
+  });
+})();

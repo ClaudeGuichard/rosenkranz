@@ -1,6 +1,10 @@
 // Offline-Speicher der Rosenkranz-App. Version wird beim Bauen gesetzt.
-var CACHE = 'rosenkranz-db12f2f212';
-var FILES = [
+// Kern (Seite, Code, Schriften, Symbole) wird bei der Installation komplett gespeichert.
+// Bilder liegen in einem eigenen Speicher und werden einzeln nachgeladen; ein
+// Abbruch (z. B. App geschlossen) setzt beim nächsten Start dort fort.
+var CORE_CACHE = 'rosenkranz-kern-d4ba32f338';
+var IMG_CACHE = 'rosenkranz-bilder-1';
+var CORE = [
 "./",
 "app.js",
 "fonts/eb-garamond-latin-400-italic.woff2",
@@ -20,6 +24,10 @@ var FILES = [
 "icons/icon-192.png",
 "icons/icon-512.png",
 "icons/icon.svg",
+"index.html",
+"manifest.webmanifest"
+];
+var IMGS = [
 "img/freud-1-a.jpg",
 "img/freud-1-b.jpg",
 "img/freud-1-c.jpg",
@@ -79,19 +87,48 @@ var FILES = [
 "img/schmerz-4-c.jpg",
 "img/schmerz-5-a.jpg",
 "img/schmerz-5-b.jpg",
-"img/schmerz-5-c.jpg",
-"index.html",
-"manifest.webmanifest"
+"img/schmerz-5-c.jpg"
 ];
 
 self.addEventListener('install', function (e) {
-  e.waitUntil(caches.open(CACHE).then(function (c) { return c.addAll(FILES); }).then(function () { return self.skipWaiting(); }));
+  e.waitUntil(caches.open(CORE_CACHE).then(function (c) { return c.addAll(CORE); }).then(function () { return self.skipWaiting(); }));
 });
 
 self.addEventListener('activate', function (e) {
   e.waitUntil(caches.keys().then(function (keys) {
-    return Promise.all(keys.filter(function (k) { return k.indexOf('rosenkranz-') === 0 && k !== CACHE; }).map(function (k) { return caches.delete(k); }));
-  }).then(function () { return self.clients.claim(); }));
+    return Promise.all(keys.filter(function (k) {
+      return k.indexOf('rosenkranz-') === 0 && k !== CORE_CACHE && k !== IMG_CACHE;
+    }).map(function (k) { return caches.delete(k); }));
+  }).then(function () { return self.clients.claim(); }).then(function () { fill(); }));
+});
+
+var filling = null;
+function notify() {
+  self.clients.matchAll().then(function (cs) { cs.forEach(function (c) { c.postMessage({ type: 'progress' }); }); });
+}
+function fill() {
+  if (filling) return filling;
+  filling = caches.open(IMG_CACHE).then(function (cache) {
+    var todo = [];
+    return Promise.all(IMGS.map(function (u) {
+      return cache.match(u).then(function (hit) { if (!hit) todo.push(u); });
+    })).then(function () {
+      var i = 0;
+      function worker() {
+        if (i >= todo.length) return Promise.resolve();
+        var u = todo[i++];
+        return fetch(u, { cache: 'no-cache' }).then(function (r) {
+          if (r.ok) return cache.put(u, r).then(notify);
+        }).catch(function () {}).then(worker);
+      }
+      return Promise.all([worker(), worker(), worker()]);
+    });
+  }).then(function () { filling = null; notify(); }, function () { filling = null; });
+  return filling;
+}
+
+self.addEventListener('message', function (e) {
+  if (e.data === 'fill') e.waitUntil(fill());
 });
 
 self.addEventListener('fetch', function (e) {
@@ -103,5 +140,15 @@ self.addEventListener('fetch', function (e) {
     e.respondWith(caches.match('./').then(function (hit) { return hit || fetch(e.request); }));
     return;
   }
-  e.respondWith(caches.match(e.request, { ignoreSearch: true }).then(function (hit) { return hit || fetch(e.request); }));
+  e.respondWith(caches.match(e.request, { ignoreSearch: true }).then(function (hit) {
+    if (hit) return hit;
+    return fetch(e.request).then(function (r) {
+      // Angeschaute Bilder sofort mitspeichern
+      if (r.ok && url.pathname.indexOf('/img/') !== -1) {
+        var copy = r.clone();
+        caches.open(IMG_CACHE).then(function (c) { c.put(e.request, copy); });
+      }
+      return r;
+    });
+  }));
 });
