@@ -977,6 +977,109 @@ function litDayName(date) {
   var ow = 34 - Math.round(diff(add(adv, -7), s) / 7);
   return sun ? ow + '. Sonntag im Jahreskreis' : wd + ' der ' + ow + '. Woche im Jahreskreis';
 }
+// Tagesfeier nach dem Regionalkalender für das deutsche Sprachgebiet.
+// Grundlage: Grundordnung des Kirchenjahres (GrKir), Nr. 5, 6, 56 f, 59, 60
+// und das Verzeichnis der liturgischen Tage nach ihrer Rangordnung
+// (DBK, Arbeitshilfen Nr. 77, Die Messfeier – Dokumentensammlung, 2015).
+// Kleinere Zahl = höherer Rang (1 bis 13 wie im Verzeichnis).
+function litTemporale(d) {
+  var DAY = 86400000, y = d.getFullYear();
+  var diff = function (a, b) { return Math.round((a - b) / DAY); };
+  var add = function (a, n) { return new Date(a.getFullYear(), a.getMonth(), a.getDate() + n); };
+  var E = easterDate(y), e = diff(d, E), sun = d.getDay() === 0;
+  var c = new Date(y, 11, 25), adv = add(c, -((c.getDay() || 7) + 21));
+  var m = d.getMonth(), dd = d.getDate();
+  var name = litDayName(d);
+  var r = function (rank, label, nm) { return { rank: rank, label: label, name: nm || name }; };
+  if (e === -3) return r(1, 'Österliches Triduum');
+  if (e === -2 || e === -1) return r(1, 'Österliches Triduum');
+  if (e === 0) return r(1, 'Hochfest');
+  if (e >= 1 && e <= 7) return r(2, e === 7 ? 'Sonntag' : 'Tag in der Osteroktav', e === 7 ? '2. Sonntag der Osterzeit (Weißer Sonntag)' : null);
+  if (e === 39) return r(2, 'Hochfest', 'Christi Himmelfahrt');
+  if (e === 49) return r(2, 'Hochfest');
+  if (e === -46) return r(2, 'Beginn der Fastenzeit');
+  if (e >= -6 && e <= -4) return r(2, 'Karwoche');
+  if (e === 56) return r(3, 'Hochfest', 'Dreifaltigkeitssonntag');
+  if (e === 60) return r(3, 'Hochfest', 'Fronleichnam');
+  if (e === 68) return r(3, 'Hochfest', 'Heiligstes Herz Jesu');
+  if (m === 11 && dd === 25) return r(2, 'Hochfest');
+  if (m === 0 && dd === 6) return r(2, 'Hochfest');
+  if (sun && diff(d, adv) === -7) return r(3, 'Hochfest', 'Christkönigssonntag');
+  var bap = (function () { var x = new Date(y, 0, 6); return add(x, 7 - x.getDay()); })();
+  if (diff(d, bap) === 0) return r(5, 'Fest', 'Taufe des Herrn');
+  // Heilige Familie: Sonntag in der Weihnachtsoktav, sonst 30. Dezember
+  if (m === 11 && dd > 25 && (sun || (dd === 30 && c.getDay() === 0))) return r(5, 'Fest', 'Fest der Heiligen Familie');
+  var lent = e > -46 && e < 0, advent = d >= adv && d < c, easterTime = e > 7 && e < 49;
+  if (sun && (lent || advent || easterTime)) return r(2, 'Sonntag');
+  if (sun) {
+    if (m === 0 && dd >= 2 && dd <= 5) return r(6, 'Sonntag', '2. Sonntag nach Weihnachten');
+    return r(6, 'Sonntag');
+  }
+  if (advent && dd >= 17) return r(9, 'Wochentag im Advent');
+  if (m === 11 && dd > 25) return r(9, 'Tag in der Weihnachtsoktav');
+  if (lent) return r(9, 'Wochentag der Fastenzeit');
+  return r(13, 'Wochentag');
+}
+function litDay(d, saints) {
+  var DAY = 86400000, y = d.getFullYear();
+  var add = function (a, n) { return new Date(a.getFullYear(), a.getMonth(), a.getDate() + n); };
+  var pad = function (n) { return (n < 10 ? '0' : '') + n; };
+  var keyOf = function (x) { return pad(x.getMonth() + 1) + '-' + pad(x.getDate()); };
+  var same = function (a, b) { return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate(); };
+  var HERRENFEST = { '02-02': 1, '08-06': 1, '09-14': 1, '11-09': 1 };
+  var RANK = function (k, code) {
+    if (code === 'H') return (k === '12-25' || k === '01-06') ? 2 : 3;
+    if (code === 'F') return HERRENFEST[k] ? 5 : 7;
+    return code === 'G' ? 10 : 12;
+  };
+  var LABEL = { H: 'Hochfest', F: 'Fest', G: 'Gebotener Gedenktag', g: 'Nicht gebotener Gedenktag' };
+  // Bewegliche Gedenktage
+  var E = easterDate(y);
+  var movable = {};
+  movable[keyOf(add(E, 50))] = [['G', 'Maria, Mutter der Kirche (Pfingstmontag)']];
+  movable[keyOf(add(E, 69))] = [['G', 'Unbeflecktes Herz Mariä']];
+  var entriesFor = function (x) {
+    var k = keyOf(x), out = [];
+    (saints[k] || []).forEach(function (s) { if (s[1] !== 'Geburt des Herrn' && s[1] !== 'Erscheinung des Herrn') out.push({ code: s[0], name: s[1], rank: RANK(k, s[0]) }); });
+    (movable[k] || []).forEach(function (s) { out.push({ code: s[0], name: s[1], rank: RANK(k, s[0]) }); });
+    return out;
+  };
+  // Verlegte Hochfeste (GrKir 5, 56 f, 60)
+  var transferredTo = function (orig) {
+    var t = litTemporale(orig), k = keyOf(orig);
+    if (t.rank > 3) return orig;
+    var E2 = easterDate(orig.getFullYear()), DAYS = Math.round((orig - E2) / DAY);
+    if (k === '03-25' && DAYS >= -7 && DAYS <= 7) return add(E2, 8);
+    if (k === '03-19' && DAYS >= -7 && DAYS <= -1) return add(E2, -8);
+    if (t.rank === 2 && orig.getDay() === 0) return add(orig, 1);
+    if (t.rank === 3) { var prev = add(orig, -1); if (litTemporale(prev).rank > 8) return prev; }
+    var n = add(orig, 1);
+    while (litTemporale(n).rank <= 8 || entriesFor(n).some(function (s) { return s.rank <= 8; })) n = add(n, 1);
+    return n;
+  };
+  var cands = [];
+  entriesFor(d).forEach(function (s) {
+    if (s.code !== 'H') { cands.push(s); return; }
+    if (same(transferredTo(d), d)) cands.push(s);
+  });
+  // Hochfeste, die auf diesen Tag verlegt wurden
+  for (var off = -20; off <= 20; off++) {
+    if (off === 0) continue;
+    var o = add(d, off);
+    entriesFor(o).forEach(function (s) { if (s.code === 'H' && same(transferredTo(o), d)) cands.push({ code: 'H', name: s.name + ' (verlegt)', rank: s.rank }); });
+  }
+  var t = litTemporale(d);
+  cands.sort(function (a, b) { return a.rank - b.rank; });
+  var top = cands[0];
+  if (top && top.rank < t.rank) {
+    // gleichrangige Gedenktage nebeneinander (an einem gebotenen Gedenktag entfallen die nichtgebotenen)
+    var rest = cands.slice(1).filter(function (s) { return (top.code === 'G' || top.code === 'g') && s.rank === top.rank; }).map(function (s) { return s.name; });
+    return { name: top.name, rank: LABEL[top.code], others: rest };
+  }
+  // Tag des Kirchenjahres; Gedenktage an den Tagen nach Nr. 9 nur als Kommemoration
+  var comm = t.rank === 9 ? cands.filter(function (s) { return s.code === 'G' || s.code === 'g'; }).map(function (s) { return s.name + ' (Kommemoration)'; }) : [];
+  return { name: t.name, rank: t.label, others: comm };
+}
 // Schriftstellen je Geheimnis: vollständige Erzählabschnitte rund um die Kernverse
 // der Rosenkranzseiten des Vatikans und der US-Bischofskonferenz
 var BIBEL = {
@@ -1132,18 +1235,17 @@ class Component extends DCLogic {
     function pad(n) { return (n < 10 ? '0' : '') + n; }
     function dayInfo(m, d) {
       var key = pad(m + 1) + '-' + pad(d);
-      var list = (cal62 ? SAINTS.c62 : SAINTS.reg)[key];
-      if (list && list.length) {
-        var sorted = list.slice().sort(function (a, b) { return ORDER[a[0]] - ORDER[b[0]]; });
-        var others = sorted.slice(1).map(function (e) { return e[1]; });
-        return { name: sorted[0][1], rank: (cal62 ? RANK_62 : RANK_REG)[sorted[0][0]], hasOthers: others.length > 0, others: others.join(', ') };
+      if (cal62) {
+        var list = SAINTS.c62[key];
+        if (list && list.length) {
+          var sorted = list.slice().sort(function (a, b) { return ORDER[a[0]] - ORDER[b[0]]; });
+          var others = sorted.slice(1).map(function (e) { return e[1]; });
+          return { name: sorted[0][1], rank: RANK_62[sorted[0][0]], hasOthers: others.length > 0, others: others.join(', ') };
+        }
+        return { name: 'Feria', rank: 'Kein Fest im Kalender von 1962', hasOthers: false, others: '' };
       }
-      if (cal62) return { name: 'Feria', rank: 'Kein Fest im Kalender von 1962', hasOthers: false, others: '' };
-      var dt = new Date(new Date().getFullYear(), m, d);
-      var ln = litDayName(dt);
-      var SPECIAL = { 'Taufe des Herrn': 'Fest', 'Ostersonntag': 'Hochfest', 'Pfingstsonntag': 'Hochfest', 'Ostermontag': 'Tag in der Osteroktav',
-        'Aschermittwoch': 'Beginn der Fastenzeit', 'Gründonnerstag': 'Österliches Triduum', 'Karfreitag': 'Österliches Triduum', 'Karsamstag': 'Österliches Triduum' };
-      return { name: ln, rank: SPECIAL[ln] || (dt.getDay() === 0 ? 'Sonntag' : 'Wochentag'), hasOthers: false, others: '' };
+      var info = litDay(new Date(new Date().getFullYear(), m, d), SAINTS.reg);
+      return { name: info.name, rank: info.rank, hasOthers: info.others.length > 0, others: info.others.join(', ') };
     }
 
     // Ältere lateinische Bezeichnungen (nur Latein; lichtreiche gibt es in dieser Form nicht)
@@ -1171,7 +1273,7 @@ class Component extends DCLogic {
     if (this.props.season === 'weihnachtszeit') hd = new Date(now.getFullYear(), 11, 29);
     if (this.props.season === 'osterzeit') { var ed = easterDate(now.getFullYear()); hd = new Date(ed.getFullYear(), ed.getMonth(), ed.getDate() + 19); }
     var dateLabel = daysDe[hd.getDay()] + ', ' + hd.getDate() + '. ' + monthsDe[hd.getMonth()];
-    var litDayLabel = litDayName(hd);
+    var litDayLabel = litTemporale(hd).name;
 
     var SEASONS = {
       jahreskreis: { color: '#2E6B3C', de: 'Zeit im Jahreskreis', la: 'Tempus per annum', ph: '[Platzhalter: Zeit im Jahreskreis]' },
