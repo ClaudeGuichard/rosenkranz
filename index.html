@@ -330,6 +330,7 @@ button{touch-action:manipulation}
 </div>
 </sc-if>
 <sc-if value="{{hasOffline}}"><div style="display: flex; flex-direction: column; gap: 4px; padding: 14px 0 4px; border-top: 1px solid {{c.rule}}"><span style="font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 16px; font-weight: 600">Offline</span><span role="status" style="font-size: 16px; line-height: 1.4; color: {{c.muted}}">{{offlineText}}</span></div></sc-if>
+<button type="button" onClick="{{openLegal}}" style="margin-top: 4px; height: 44px; border: 0; background: transparent; color: {{c.ink}}; font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 16px; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; cursor: pointer">Impressum und Datenschutz</button>
 <button type="button" onClick="{{reopenIntro}}" style="margin-top: 8px; height: 48px; border: 1px solid {{c.ink}}; border-radius: 8px; background: transparent; color: {{c.ink}}; font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 16px; font-weight: 600; cursor: pointer">Hinweise zu LA+ und Speichern</button>
 <button type="button" onClick="{{closeSettings}}" style="margin-top: 8px; height: 48px; border: 0; border-radius: 8px; background: {{c.ink}}; color: {{c.paper}}; font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 16px; font-weight: 600; cursor: pointer">Fertig</button>
 </section>
@@ -386,6 +387,49 @@ button{touch-action:manipulation}
 <button type="button" onClick="{{closeIntro}}" style="height: 50px; border: 0; border-radius: 8px; background: {{c.ink}}; color: {{c.paper}}; font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 17px; font-weight: 600; cursor: pointer">Verstanden</button>
 <p style="font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 14px; line-height: 1.4; margin: -10px 0 0; text-align: center; color: {{c.muted}}">Diese Hinweise findest du jederzeit in den Einstellungen.</p>
 </section>
+</div>
+</sc-if>
+
+<sc-if value="{{legalOpen}}">
+<div role="dialog" aria-modal="true" aria-labelledby="recht-titel" style="overscroll-behavior: contain; position: fixed; z-index: 25; top: 0; right: 0; bottom: 0; left: 0; background: {{c.paper}}; color: {{c.ink}}; overflow-y: auto; display: flex; justify-content: center">
+<div style="width: 100%; max-width: 480px; box-sizing: border-box; padding: calc(16px + env(safe-area-inset-top, 0px)) 20px calc(40px + env(safe-area-inset-bottom, 0px)); display: flex; flex-direction: column; gap: 28px">
+<div style="display: flex; align-items: center; gap: 8px; min-height: 48px">
+<button type="button" onClick="{{closeLegal}}" aria-label="Zurück zur Startseite" style="height: 44px; padding: 0 14px 0 8px; border: 1px solid {{c.ink}}; border-radius: 8px; background: transparent; color: {{c.ink}}; font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 16px; font-weight: 600; cursor: pointer">‹ Zurück</button>
+</div>
+<h1 id="recht-titel" style="margin: 0; font-size: 32px; font-weight: 600; line-height: 1.1">Impressum und Datenschutz</h1>
+
+<section style="display: flex; flex-direction: column; gap: 10px">
+<h2 style="margin: 0; font-size: 26px; font-weight: 600; line-height: 1.2">Impressum</h2>
+<p style="font-family: 'Source Sans 3', system-ui, sans-serif; margin: 0; font-size: 14px; line-height: 1.45; color: {{c.muted}}">Angaben nach § 18 Abs. 1 Medienstaatsvertrag</p>
+<p style="margin: 0; font-size: 18px; line-height: 1.5">{{imp.name}}<br>{{imp.strasse}}<br>{{imp.ort}}</p>
+<sc-if value="{{impHasEmail}}"><p style="margin: 0; font-size: 18px; line-height: 1.5">E-Mail: {{imp.email}}</p></sc-if>
+<p style="font-family: 'Source Sans 3', system-ui, sans-serif; margin: 0; font-size: 14px; line-height: 1.45; color: {{c.muted}}">Die App ist ein privates, nicht kommerzielles Angebot ohne Werbung.</p>
+</section>
+
+<section style="display: flex; flex-direction: column; gap: 14px">
+<h2 style="margin: 0; font-size: 26px; font-weight: 600; line-height: 1.2">Datenschutz</h2>
+<p style="margin: 0; font-size: 18px; line-height: 1.5">Verantwortlich ist die oben im Impressum genannte Person.</p>
+
+<h3 style="font-family: 'Source Sans 3', system-ui, sans-serif; margin: 0; font-size: 16px; font-weight: 600">Keine Erfassung durch die App</h3>
+<p style="margin: 0; font-size: 18px; line-height: 1.5">Die App sammelt keine Daten über dich. Es gibt keine Cookies, keine Statistik und kein Tracking. Schriften und Bilder liegen auf demselben Server wie die App, fremde Dienste werden nicht eingebunden.</p>
+
+<h3 style="font-family: 'Source Sans 3', system-ui, sans-serif; margin: 0; font-size: 16px; font-weight: 600">Speicher auf deinem Gerät</h3>
+<p style="margin: 0; font-size: 18px; line-height: 1.5">Auf deinem Gerät speichert die App deine Einstellungen, etwa Sprache, Modus und Erscheinungsbild, sowie eine Offline-Kopie von Seite, Schriften und Bildern. Diese Daten verlassen dein Gerät nicht. Sie sind für die gewünschten Funktionen erforderlich und daher ohne Einwilligung zulässig (§ 25 Abs. 2 Nr. 2 TDDDG). Du kannst sie jederzeit löschen, indem du die App vom Home-Bildschirm entfernst oder in deinem Browser die Websitedaten löschst.</p>
+
+<h3 style="font-family: 'Source Sans 3', system-ui, sans-serif; margin: 0; font-size: 16px; font-weight: 600">Bereitstellung über GitHub Pages</h3>
+<p style="margin: 0; font-size: 18px; line-height: 1.5">Die App wird über GitHub Pages bereitgestellt, einen Dienst der GitHub, Inc. in den USA. Beim Aufruf speichert GitHub deine IP-Adresse aus Sicherheitsgründen. Rechtsgrundlage ist mein berechtigtes Interesse an einer sicheren und funktionierenden Bereitstellung (Art. 6 Abs. 1 lit. f DSGVO). Die Daten werden in den USA verarbeitet. GitHub beruft sich dafür auf das EU-US Data Privacy Framework. Wie lange die Daten gespeichert werden, legt GitHub fest. Näheres steht in der <a href="https://docs.github.com/de/site-policy/privacy-policies/github-general-privacy-statement" target="_blank" rel="noopener" style="color: {{c.accentText}}">Datenschutzerklärung von GitHub</a>.</p>
+
+<h3 style="font-family: 'Source Sans 3', system-ui, sans-serif; margin: 0; font-size: 16px; font-weight: 600">Deine Rechte</h3>
+<p style="margin: 0; font-size: 18px; line-height: 1.5">Du hast das Recht auf Auskunft, Berichtigung, Löschung und Einschränkung der Verarbeitung, auf Widerspruch sowie auf Datenübertragbarkeit (Art. 15 bis 21 DSGVO). Da ich selbst keine Daten über dich speichere, betreffen diese Rechte vor allem die Verarbeitung durch GitHub. Außerdem kannst du dich bei einer Datenschutz-Aufsichtsbehörde beschweren, zum Beispiel bei der Berliner Beauftragten für Datenschutz und Informationsfreiheit.</p>
+</section>
+
+<section style="display: flex; flex-direction: column; gap: 10px">
+<h2 style="margin: 0; font-size: 26px; font-weight: 600; line-height: 1.2">Bilder</h2>
+<p style="margin: 0; font-size: 18px; line-height: 1.5">Alle Gemälde sind gemeinfrei. Künstler und Werk stehen jeweils unter dem Bild.</p>
+</section>
+
+<p style="font-family: 'Source Sans 3', system-ui, sans-serif; margin: 0; font-size: 14px; line-height: 1.45; color: {{c.muted}}">Stand: {{imp.stand}}</p>
+</div>
 </div>
 </sc-if>
 </div>
@@ -653,7 +697,7 @@ button{touch-action:manipulation}
 </sc-for>
 </section>
 
-<p style="margin: 0; font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 13px; line-height: 1.45; color: {{c.muted}}">Lateinische Schreibweise mit i statt j und ausgeschriebenem ae. Beim Fatima-Gebet ist die Lesart „inferiori“ oder „inferni“ noch offen.</p>
+<p style="margin: 0; font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 13px; line-height: 1.45; color: {{c.muted}}">Lateinische Schreibweise mit i statt j und ausgeschriebenem ae. Deutsche Fassung des Michaelsgebets nach Vatican News. Beim Fatima-Gebet ist die Lesart „inferiori“ oder „inferni“ noch offen.</p>
 </div>
 </template>
 <noscript><p style="font-family:serif;padding:20px">Bitte JavaScript aktivieren, um die Rosenkranz-App zu nutzen.</p></noscript>

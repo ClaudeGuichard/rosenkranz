@@ -238,10 +238,10 @@ function plain(src) { return src.normalize('NFD').replace(/[́̈]/g, '').normali
 var TX = {
   kreuz: {
     de: ['Im Namen des Vaters', 'und des Sohnes', 'und des Heiligen Geistes.', 'Amen.'],
-    la: ['In nómine Pátris,', 'et Fílii,', 'et Spíritus Sáncti.', 'Ámen.']
+    la: ['In nómine Pátris', 'et Fílii', 'et Spíritus Sáncti.', 'Ámen.']
   },
   credo: {
-    de: ['Ich glaube an Gott, den Vater, den Allmächtigen,', 'den Schöpfer des Himmels und der Erde,', 'und an Jesus Christus, seinen eingeborenen Sohn, unsern Herrn,',
+    de: ['Ich glaube an Gott den Vater, den Allmächtigen,', 'den Schöpfer des Himmels und der Erde,', 'und an Jesus Christus, seinen eingeborenen Sohn, unseren Herrn,',
       'empfangen durch den Heiligen Geist,', 'geboren von der Jungfrau Maria,', 'gelitten unter Pontius Pilatus,', 'gekreuzigt, gestorben und begraben,',
       'hinabgestiegen in das Reich des Todes,', 'am dritten Tage auferstanden von den Toten,', 'aufgefahren in den Himmel;', 'er sitzt zur Rechten Gottes, des allmächtigen Vaters;',
       'von dort wird er kommen, zu richten die Lebenden und die Toten.', 'Ich glaube an den Heiligen Geist,', 'die heilige katholische Kirche,', 'Gemeinschaft der Heiligen,',
@@ -256,16 +256,16 @@ var TX = {
     de: ['Vater unser im Himmel,', 'geheiligt werde dein Name.', 'Dein Reich komme.', 'Dein Wille geschehe,', 'wie im Himmel so auf Erden.', 'Unser tägliches Brot gib uns heute.',
       'Und vergib uns unsere Schuld,', 'wie auch wir vergeben unsern Schuldigern.', 'Und führe uns nicht in Versuchung,', 'sondern erlöse uns von dem Bösen.', 'Amen.'],
     la: ['Páter Nóster,', 'qui es in caélis,', 'sanctificétur nómen túum.', 'Advéniat régnum túum.', 'Fíat volúntas túa, sícut in caélo, et in térra.',
-      'Pánem nóstrum quotidiánum da nóbis hódie.', 'Et dimítte nóbis débita nóstra,', 'sícut et nos dimíttimus debitóribus nóstris.',
+      'Pánem nóstrum cotidiánum da nóbis hódie.', 'Et dimítte nóbis débita nóstra,', 'sícut et nos dimíttimus debitóribus nóstris.',
       'Et ne nos indúcas in tentatiónem: sed líbera nos a málo.', 'Ámen.']
   },
   aveA: {
-    de: ['Gegrüßet seist du, Maria, voll der Gnade,', 'der Herr ist mit dir.', 'Du bist gebenedeit unter den Frauen,', 'und gebenedeit ist die Frucht deines Leibes,'],
+    de: ['Gegrüßet seist du, Maria, voll der Gnade,', 'der Herr ist mit dir.', 'Du bist gebenedeit unter den Frauen', 'und gebenedeit ist die Frucht deines Leibes,'],
     la: ['Áve María, grátia pléna,', 'Dóminus técum.', 'Benedícta tu in muliéribus,', 'et benedíctus frúctus véntris túi, Iésus.']
   },
   aveB: {
     de: ['Heilige Maria, Mutter Gottes,', 'bitte für uns Sünder', 'jetzt und in der Stunde unseres Todes.', 'Amen.'],
-    la: ['Sáncta María, Máter Déi,', 'óra pro nóbis peccatóribus,', 'nunc, et in hóra mórtis nóstrae.', 'Ámen.']
+    la: ['Sáncta María, Máter Déi,', 'óra pro nóbis peccatóribus,', 'nunc et in hóra mórtis nóstrae.', 'Ámen.']
   },
   gloria: {
     de: ['Ehre sei dem Vater', 'und dem Sohn', 'und dem Heiligen Geist,', 'wie im Anfang, so auch jetzt', 'und alle Zeit', 'und in Ewigkeit.', 'Amen.'],
@@ -277,17 +277,18 @@ var TX = {
       'quae misericórdiae túae máxime índigent.', 'Ámen.']
   },
   salve: {
-    de: ['Sei gegrüßt, o Königin,', 'Mutter der Barmherzigkeit,', 'unser Leben, unsre Wonne und unsre Hoffnung, sei gegrüßt!', 'Zu dir rufen wir verbannte Kinder Evas;',
-      'zu dir seufzen wir trauernd und weinend in diesem Tal der Tränen.', 'Wohlan denn, unsre Fürsprecherin,', 'wende deine barmherzigen Augen uns zu,',
-      'und nach diesem Elend zeige uns Jesus,', 'die gebenedeite Frucht deines Leibes!', 'O gütige, o milde, o süße Jungfrau Maria.'],
-    la: ['Sálve, Regína, máter misericórdiae,', 'víta, dulcédo, et spes nóstra, sálve.', 'Ad te clamámus, éxsules fílii Hévae.',
+    de: ['Sei gegrüßt, o Königin,', 'Mutter der Barmherzigkeit,', 'unser Leben, unsre Wonne und unsere Hoffnung, sei gegrüßt.', 'Zu dir rufen wir verbannte Kinder Evas;',
+      'zu dir seufzen wir trauernd und weinend in diesem Tal der Tränen.', 'Wohlan denn, unsere Fürsprecherin,', 'wende deine barmherzigen Augen uns zu,',
+      'und nach diesem Elend zeige uns Jesus,', 'die gebenedeite Frucht deines Leibes.', 'O gütige, o milde, o süße Jungfrau Maria.'],
+    la: ['Sálve, Regína, máter misericórdiae;', 'víta, dulcédo et spes nóstra, sálve.', 'Ad te clamámus, éxsules fílii Hévae.',
       'Ad te suspirámus, geméntes et fléntes in hac lacrimárum válle.', 'Éia, érgo, advocáta nóstra,', 'íllos túos misericórdes óculos ad nos convérte.',
       'Et Iésum, benedíctum frúctum véntris túi,', 'nóbis post hoc exsílium osténde.', 'O clémens, o pía, o dúlcis Vírgo María.']
   },
   michael: {
-    de: ['Heiliger Erzengel Michael, verteidige uns im Kampfe!', 'Gegen die Bosheit und die Nachstellungen des Teufels sei unser Schutz.',
-      '„Gebiete ihm, o Gott!“, so bitten wir flehentlich;', 'du aber, Fürst der himmlischen Heerscharen,', 'stoße den Satan und die anderen bösen Geister,',
-      'die zum Verderben der Seelen die Welt durchziehen,', 'mit der Kraft Gottes in die Hölle.', 'Amen.'],
+    // Deutsche Fassung nach Vatican News (vaticannews.va/de/gebete/heiliger-erzengel-michael.html)
+    de: ['Heiliger Erzengel Michael,', 'beschirme uns im Kampfe gegen die Bosheiten', 'und Nachstellungen des Teufels.', 'Sei Du unsere Schutzwehr;',
+      'Gott gebiete ihm mit Macht,', 'wir bitten demütig darum.', 'Und Du, Fürst der himmlischen Heerscharen,', 'stürze den Satan und die anderen bösen Geister,',
+      'die zum Verderben der Seelen in der Welt umherwandern,', 'mit göttlicher Kraft in die Hölle hinab.', 'Amen.'],
     la: ['Sáncte Míchaël Archángele,', 'defénde nos in proélio,', 'cóntra nequítiam et insídias diáboli ésto praesídium.',
       'Ímperet ílli Déus, súpplices deprecámur:', 'túque, prínceps milítiae caeléstis,', 'Sátanam aliósque spíritus malígnos,',
       'qui ad perditiónem animárum pervagántur in múndo,', 'divína virtúte, in inférnum detrúde.', 'Ámen.']
@@ -299,7 +300,7 @@ var OPEN_INS = {
 };
 var OPEN_VIRT = ['Glaube', 'Hoffnung', 'Liebe'];
 var DEC_DE = {
-  gaudiosa: ['den du, o Jungfrau, vom Heiligen Geist empfangen hast', 'den du, o Jungfrau, zu Elisabet getragen hast', 'den du, o Jungfrau, geboren hast',
+  gaudiosa: ['den du, o Jungfrau, vom Heiligen Geist empfangen hast', 'den du, o Jungfrau, zu Elisabeth getragen hast', 'den du, o Jungfrau, geboren hast',
     'den du, o Jungfrau, im Tempel aufgeopfert hast', 'den du, o Jungfrau, im Tempel wiedergefunden hast'],
   luminosa: ['der von Johannes getauft worden ist', 'der sich bei der Hochzeit in Kana offenbart hat', 'der uns das Reich Gottes verkündet hat',
     'der auf dem Berg verklärt worden ist', 'der uns die Eucharistie geschenkt hat'],
@@ -630,16 +631,16 @@ function plain(src) { return src.normalize('NFD').replace(/[́̈]/g, '').normali
 var PRAYERS = [
   { id: 'kreuz', de: 'Kreuzzeichen', la: 'Signum Crucis', where: 'Am Anfang, mit dem Kreuz in der Hand',
     pairs: [
-      ['Im Namen des Vaters', 'In nómine Pátris,'],
-      ['und des Sohnes', 'et Fílii,'],
+      ['Im Namen des Vaters', 'In nómine Pátris'],
+      ['und des Sohnes', 'et Fílii'],
       ['und des Heiligen Geistes.', 'et Spíritus Sáncti.'],
       ['Amen.', 'Ámen.']
     ] },
   { id: 'credo', de: 'Glaubensbekenntnis', la: 'Symbolum Apostolorum', where: 'Am Kreuz',
     pairs: [
-      ['Ich glaube an Gott, den Vater, den Allmächtigen,', 'Crédo in Déum Pátrem omnipoténtem,'],
+      ['Ich glaube an Gott den Vater, den Allmächtigen,', 'Crédo in Déum Pátrem omnipoténtem,'],
       ['den Schöpfer des Himmels und der Erde,', 'Creatórem caéli et térrae.'],
-      ['und an Jesus Christus, seinen eingeborenen Sohn, unsern Herrn,', 'Et in Iésum Chrístum, Fílium éius únicum, Dóminum nóstrum,'],
+      ['und an Jesus Christus, seinen eingeborenen Sohn, unseren Herrn,', 'Et in Iésum Chrístum, Fílium éius únicum, Dóminum nóstrum,'],
       ['empfangen durch den Heiligen Geist,', 'qui concéptus est de Spíritu Sáncto,'],
       ['geboren von der Jungfrau Maria,', 'nátus ex María Vírgine,'],
       ['gelitten unter Pontius Pilatus,', 'pássus sub Póntio Piláto,'],
@@ -664,7 +665,7 @@ var PRAYERS = [
       ['Dein Reich komme.', 'Advéniat régnum túum.'],
       ['Dein Wille geschehe,', 'Fíat volúntas túa,'],
       ['wie im Himmel so auf Erden.', 'sícut in caélo, et in térra.'],
-      ['Unser tägliches Brot gib uns heute.', 'Pánem nóstrum quotidiánum da nóbis hódie.'],
+      ['Unser tägliches Brot gib uns heute.', 'Pánem nóstrum cotidiánum da nóbis hódie.'],
       ['Und vergib uns unsere Schuld,', 'Et dimítte nóbis débita nóstra,'],
       ['wie auch wir vergeben unsern Schuldigern.', 'sícut et nos dimíttimus debitóribus nóstris.'],
       ['Und führe uns nicht in Versuchung,', 'Et ne nos indúcas in tentatiónem:'],
@@ -675,11 +676,11 @@ var PRAYERS = [
     pairs: [
       ['Gegrüßet seist du, Maria, voll der Gnade,', 'Áve María, grátia pléna,'],
       ['der Herr ist mit dir.', 'Dóminus técum.'],
-      ['Du bist gebenedeit unter den Frauen,', 'Benedícta tu in muliéribus,'],
+      ['Du bist gebenedeit unter den Frauen', 'Benedícta tu in muliéribus,'],
       ['und gebenedeit ist die Frucht deines Leibes, Jesus.', 'et benedíctus frúctus véntris túi, Iésus.'],
       ['Heilige Maria, Mutter Gottes,', 'Sáncta María, Máter Déi,'],
       ['bitte für uns Sünder', 'óra pro nóbis peccatóribus,'],
-      ['jetzt und in der Stunde unseres Todes.', 'nunc, et in hóra mórtis nóstrae.'],
+      ['jetzt und in der Stunde unseres Todes.', 'nunc et in hóra mórtis nóstrae.'],
       ['Amen.', 'Ámen.']
     ],
     note: [
@@ -710,24 +711,24 @@ var PRAYERS = [
     ] },
   { id: 'salve', de: 'Salve Regina', la: 'Salve Regina', where: 'Zum Abschluss',
     pairs: [
-      ['Sei gegrüßt, o Königin, Mutter der Barmherzigkeit,', 'Sálve, Regína, máter misericórdiae,'],
-      ['unser Leben, unsre Wonne und unsre Hoffnung, sei gegrüßt!', 'víta, dulcédo, et spes nóstra, sálve.'],
+      ['Sei gegrüßt, o Königin, Mutter der Barmherzigkeit,', 'Sálve, Regína, máter misericórdiae;'],
+      ['unser Leben, unsre Wonne und unsere Hoffnung, sei gegrüßt.', 'víta, dulcédo et spes nóstra, sálve.'],
       ['Zu dir rufen wir verbannte Kinder Evas;', 'Ad te clamámus, éxsules fílii Hévae.'],
       ['zu dir seufzen wir trauernd und weinend in diesem Tal der Tränen.', 'Ad te suspirámus, geméntes et fléntes in hac lacrimárum válle.'],
-      ['Wohlan denn, unsre Fürsprecherin,', 'Éia, érgo, advocáta nóstra,'],
+      ['Wohlan denn, unsere Fürsprecherin,', 'Éia, érgo, advocáta nóstra,'],
       ['wende deine barmherzigen Augen uns zu,', 'íllos túos misericórdes óculos ad nos convérte.'],
-      ['und nach diesem Elend zeige uns Jesus, die gebenedeite Frucht deines Leibes!', 'Et Iésum, benedíctum frúctum véntris túi, nóbis post hoc exsílium osténde.'],
+      ['und nach diesem Elend zeige uns Jesus, die gebenedeite Frucht deines Leibes.', 'Et Iésum, benedíctum frúctum véntris túi, nóbis post hoc exsílium osténde.'],
       ['O gütige, o milde, o süße Jungfrau Maria.', 'O clémens, o pía, o dúlcis Vírgo María.']
     ] },
   { id: 'michael', de: 'Gebet zum hl. Michael', la: 'Sancte Michael', where: 'Zum Abschluss',
     pairs: [
-      ['Heiliger Erzengel Michael, verteidige uns im Kampfe!', 'Sáncte Míchaël Archángele, defénde nos in proélio,'],
-      ['Gegen die Bosheit und die Nachstellungen des Teufels sei unser Schutz.', 'cóntra nequítiam et insídias diáboli ésto praesídium.'],
-      ['„Gebiete ihm, o Gott!“, so bitten wir flehentlich;', 'Ímperet ílli Déus, súpplices deprecámur:'],
-      ['du aber, Fürst der himmlischen Heerscharen,', 'túque, prínceps milítiae caeléstis,'],
-      ['stoße den Satan und die anderen bösen Geister,', 'Sátanam aliósque spíritus malígnos,'],
-      ['die zum Verderben der Seelen die Welt durchziehen,', 'qui ad perditiónem animárum pervagántur in múndo,'],
-      ['mit der Kraft Gottes in die Hölle.', 'divína virtúte, in inférnum detrúde.'],
+      ['Heiliger Erzengel Michael, beschirme uns im Kampfe', 'Sáncte Míchaël Archángele, defénde nos in proélio,'],
+      ['gegen die Bosheiten und Nachstellungen des Teufels. Sei Du unsere Schutzwehr;', 'cóntra nequítiam et insídias diáboli ésto praesídium.'],
+      ['Gott gebiete ihm mit Macht, wir bitten demütig darum.', 'Ímperet ílli Déus, súpplices deprecámur:'],
+      ['Und Du, Fürst der himmlischen Heerscharen,', 'túque, prínceps milítiae caeléstis,'],
+      ['stürze den Satan und die anderen bösen Geister,', 'Sátanam aliósque spíritus malígnos,'],
+      ['die zum Verderben der Seelen in der Welt umherwandern,', 'qui ad perditiónem animárum pervagántur in múndo,'],
+      ['mit göttlicher Kraft in die Hölle hinab.', 'divína virtúte, in inférnum detrúde.'],
       ['Amen.', 'Ámen.']
     ] }
 ];
@@ -736,7 +737,7 @@ var PRAYERS = [
 var MYST = [
   { de: 'Die freudenreichen Geheimnisse', la: 'Mystéria gaudiósa', items: [
     ['den du, o Jungfrau, vom Heiligen Geist empfangen hast', 'Annuntiátio'],
-    ['den du, o Jungfrau, zu Elisabet getragen hast', 'Visitátio'],
+    ['den du, o Jungfrau, zu Elisabeth getragen hast', 'Visitátio'],
     ['den du, o Jungfrau, geboren hast', 'Natívitas'],
     ['den du, o Jungfrau, im Tempel aufgeopfert hast', 'Praesentátio'],
     ['den du, o Jungfrau, im Tempel wiedergefunden hast', 'Invéntio in Témplo']] },
@@ -1065,7 +1066,7 @@ class Component extends DCLogic {
       gaudiosa: {
         de: { name: 'Freudenreiche Geheimnisse', title: 'Die freudenreichen Geheimnisse', days: 'Montag · Samstag', decades: [
           'Jesus, den du, o Jungfrau, vom Heiligen Geist empfangen hast',
-          'Jesus, den du, o Jungfrau, zu Elisabet getragen hast',
+          'Jesus, den du, o Jungfrau, zu Elisabeth getragen hast',
           'Jesus, den du, o Jungfrau, geboren hast',
           'Jesus, den du, o Jungfrau, im Tempel aufgeopfert hast',
           'Jesus, den du, o Jungfrau, im Tempel wiedergefunden hast'] },
@@ -1309,7 +1310,8 @@ class Component extends DCLogic {
       legalOpen: !this.props.season && !!S.legal,
       openLegal: function () { RK_NAV.go('impressum'); self.setState({ legal: true, settings: false }); },
       closeLegal: function () { RK_NAV.leave('impressum'); self.setState({ legal: false }); },
-      imp: {"name": "[Vor- und Nachname]", "strasse": "[Straße und Hausnummer]", "ort": "[PLZ und Ort]", "email": "[E-Mail-Adresse]", "stand": "Oktober 2026"},
+      imp: {"name": "David Niclas Pape", "strasse": "Eichkampstraße 142", "ort": "14055 Berlin", "email": "", "stand": "Oktober 2026"},
+      impHasEmail: false,
       introOpen: !this.props.season && !S.introSeen,
       closeIntro: function () { self.setState({ introSeen: true }); },
       reopenIntro: function () { try { window.scrollTo(0, 0); } catch (e) {} self.setState({ introSeen: false, settings: false }); },
