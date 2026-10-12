@@ -239,6 +239,15 @@ button{touch-action:manipulation}
 </sc-for>
 </div>
 </section>
+<!-- zweisprachig:start -->
+<button type="button" onClick="{{openBilingual}}" style="width: 100%; text-align: left; cursor: pointer; font: inherit; display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 68px; box-sizing: border-box; padding: 12px 16px; background: {{c.card}}; border: 1px solid {{c.rule}}; border-radius: 10px; color: {{c.ink}}; text-decoration: none">
+<span style="display: flex; flex-direction: column; gap: 4px; min-width: 0">
+<span style="font-size: 21px; font-weight: 500; line-height: 1.2">Gebete auf Deutsch und Latein</span>
+<span style="font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 13px; color: {{c.muted}}">Alle Texte nebeneinander, mit Aussprachehilfe</span>
+</span>
+<span aria-hidden="true" style="flex: none; font-size: 24px; color: {{c.accentText}}">›</span>
+</button>
+<!-- zweisprachig:end -->
 
 <sc-if value="{{prayerOpen}}" hint-placeholder-val="{{ false }}">
 <div style="position: fixed; top: 0; right: 0; bottom: 0; left: 0; z-index: 20; display: flex; justify-content: center; box-sizing: border-box; overscroll-behavior: contain; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); background: {{c.paper}}">
@@ -328,6 +337,12 @@ button{touch-action:manipulation}
 </sc-if>
 
 
+<sc-if value="{{bilingualOpen}}">
+<div style="overscroll-behavior: contain; position: fixed; z-index: 22; top: 0; right: 0; bottom: 0; left: 0; overflow-y: auto; display: flex; justify-content: center; background: {{c.paper}}">
+<dc-import name="Zweisprachig" vollbild="ja" erscheinungsbild="{{themePref}}" aussprache="{{bilingualPron}}" aussprache-stil="{{pronStyle}}" on-close="{{closeBilingual}}"></dc-import>
+</div>
+</sc-if>
+
 <sc-if value="{{introOpen}}">
 <div style="position: fixed; top: 0; right: 0; bottom: 0; left: 0; z-index: 30; background: rgba(29, 27, 24, 0.5); overflow-y: auto; display: flex; padding: calc(16px + env(safe-area-inset-top, 0px)) 16px calc(16px + env(safe-area-inset-bottom, 0px)); box-sizing: border-box">
 <section role="dialog" aria-modal="true" aria-labelledby="intro-titel" style="margin: auto; width: 100%; max-width: 440px; box-sizing: border-box; background: {{c.paper}}; color: {{c.ink}}; border-radius: 14px; padding: 24px 22px 20px; display: flex; flex-direction: column; gap: 22px">
@@ -401,8 +416,8 @@ button{touch-action:manipulation}
 
 <main data-gebet-main="1" style="flex: 1 1 auto; min-height: 0; overflow-y: auto; display: flex; flex-direction: column">
 <sc-if value="{{hasImage}}" hint-placeholder-val="{{ true }}">
-<figure style="margin: 0; flex: none; display: flex; flex-direction: column; gap: 4px">
-<img src="{{img.src}}" alt="{{img.alt}}" style="width: 100%; height: {{imgHeight}}; object-fit: contain; background: {{c.rule2}}; display: block">
+<figure style="margin: 0; flex: {{figFlex}}; order: {{imgOrder}}; display: flex; flex-direction: column; gap: 4px">
+<img src="{{img.src}}" alt="{{img.alt}}" style="width: 100%; height: {{imgHeight}}; object-fit: contain; background: {{imgBg}}; display: block">
 <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 0 8px 0 16px">
 <figcaption style="min-width: 0; font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 11px; line-height: 1.35; color: {{c.muted}}">{{img.count}} · {{img.alt}}</figcaption>
 <button type="button" onClick="{{nextImage}}" style="flex: none; min-height: 44px; padding: 0 10px; border: 0; background: transparent; color: {{c.accentText}}; font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 13px; font-weight: 600; cursor: pointer">Anderes Bild</button>
@@ -416,7 +431,7 @@ button{touch-action:manipulation}
 </div>
 </sc-if>
 
-<div style="padding: 18px 20px 24px; display: flex; flex-direction: column; gap: 14px">
+<div style="order: 1; padding: {{bodyPad}}; display: flex; flex-direction: column; gap: 14px">
 <div style="display: flex; flex-direction: column; gap: 4px">
 <span style="font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: {{c.accentText}}">{{kicker}}</span>
 <sc-if value="{{hasMystLine}}" hint-placeholder-val="{{ true }}">
@@ -496,6 +511,149 @@ button{touch-action:manipulation}
 </sc-if>
 </div>
 </footer>
+</div>
+</template>
+<template id="tpl-Zweisprachig">
+
+<div lang="de" style="width: {{rootW}}; max-width: 480px; min-height: {{rootMinH}}; box-sizing: border-box; padding: calc(16px + env(safe-area-inset-top, 0px)) 20px calc(48px + env(safe-area-inset-bottom, 0px)); background: {{c.paper}}; color: {{c.ink}}; font-family: 'EB Garamond', Garamond, 'Times New Roman', serif; display: flex; flex-direction: column; gap: 26px">
+
+<div style="display: flex; align-items: center; min-height: 48px">
+<sc-if value="{{hasClose}}" hint-placeholder-val="{{ false }}">
+<button type="button" onClick="{{close}}" style="display: inline-flex; align-items: center; height: 44px; padding: 0 14px 0 10px; border: 1px solid {{c.ink}}; border-radius: 8px; background: transparent; color: {{c.ink}}; font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 15px; font-weight: 600; cursor: pointer">‹ Startseite</button>
+</sc-if>
+<sc-if value="{{noClose}}" hint-placeholder-val="{{ true }}">
+<a href="Main.dc.html" style="display: inline-flex; align-items: center; height: 44px; padding: 0 14px 0 10px; border: 1px solid {{c.ink}}; border-radius: 8px; color: {{c.ink}}; text-decoration: none; font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 15px; font-weight: 600">‹ Startseite</a>
+</sc-if>
+</div>
+
+<header style="display: flex; flex-direction: column; gap: 8px">
+<span style="font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: {{c.accentText}}">Gebete</span>
+<h1 style="margin: 0; font-size: 34px; font-weight: 500; line-height: 1.1">Deutsch und Latein</h1>
+<p style="margin: 0; font-size: 18px; line-height: 1.45; color: {{c.muted}}">Alle Gebete des Rosenkranzes in beiden Sprachen, Sinnabschnitt für Sinnabschnitt einander zugeordnet.</p>
+</header>
+
+<section aria-label="Darstellung" style="display: flex; flex-direction: column; gap: 14px; padding: 16px; background: {{c.card}}; border: 1px solid {{c.rule}}; border-radius: 10px">
+<div role="group" aria-label="Anordnung" style="display: flex; border: 1px solid {{c.ink}}; border-radius: 8px; overflow: hidden">
+<sc-for list="{{views}}" as="o" hint-placeholder-count="2">
+<button type="button" onClick="{{o.pick}}" aria-pressed="{{o.pressed}}" style="flex: 1 1 0; height: 44px; border: 0; font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 15px; font-weight: 600; background: {{o.bg}}; color: {{o.fg}}; cursor: pointer">{{o.label}}</button>
+</sc-for>
+</div>
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 16px">
+<div style="display: flex; flex-direction: column; gap: 2px; min-width: 0">
+<span id="zs-aussprache" style="font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 16px; font-weight: 600">Aussprachehilfe</span>
+<span style="font-size: 15px; line-height: 1.35; color: {{c.muted}}">Unter dem Latein steht, wie es gesprochen wird.</span>
+</div>
+<button type="button" role="switch" aria-checked="{{pronChecked}}" aria-labelledby="zs-aussprache" onClick="{{togglePron}}" style="flex: none; width: 56px; height: 44px; padding: 6px 0; border: 0; background: transparent; cursor: pointer; display: flex; align-items: center">
+<span style="width: 56px; height: 32px; border-radius: 999px; background: {{pronTrack}}; display: flex; align-items: center; padding: 3px; box-sizing: border-box; justify-content: {{pronJustify}}">
+<span style="width: 26px; height: 26px; border-radius: 50%; background: #FFFFFE; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25)"></span>
+</span>
+</button>
+</div>
+<sc-if value="{{pronOn}}" hint-placeholder-val="{{ false }}">
+<div role="group" aria-label="Aussprache" style="display: flex; border: 1px solid {{c.ink}}; border-radius: 8px; overflow: hidden">
+<sc-for list="{{styles}}" as="o" hint-placeholder-count="2">
+<button type="button" onClick="{{o.pick}}" aria-pressed="{{o.pressed}}" style="flex: 1 1 0; height: 40px; border: 0; font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 14px; font-weight: 600; background: {{o.bg}}; color: {{o.fg}}; cursor: pointer">{{o.label}}</button>
+</sc-for>
+</div>
+</sc-if>
+</section>
+
+<nav aria-label="Gebete" style="display: flex; flex-wrap: wrap; gap: 8px">
+<sc-for list="{{chips}}" as="ch" hint-placeholder-count="9">
+<button type="button" onClick="{{ch.go}}" style="display: inline-flex; align-items: center; min-height: 36px; padding: 0 12px; border: 1px solid {{c.rule}}; border-radius: 999px; background: {{c.card}}; color: {{c.ink}}; font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 14px; font-weight: 600; cursor: pointer">{{ch.label}}</button>
+</sc-for>
+</nav>
+
+<sc-for list="{{prayers}}" as="p" hint-placeholder-count="3">
+<section id="{{p.anchor}}" style="display: flex; flex-direction: column; gap: 14px; padding-top: 18px; border-top: 1px solid {{c.rule}}">
+<div style="display: flex; flex-direction: column; gap: 4px">
+<span style="font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: {{c.muted}}">{{p.where}}</span>
+<h2 style="margin: 0; font-size: 27px; font-weight: 600; line-height: 1.15">{{p.de}}</h2>
+<span style="font-size: 20px; font-style: italic; line-height: 1.2; color: {{c.accentText}}">{{p.la}}</span>
+</div>
+
+<sc-if value="{{zeilen}}" hint-placeholder-val="{{ true }}">
+<div style="display: flex; flex-direction: column; gap: 12px">
+<sc-for list="{{p.pairs}}" as="pr" hint-placeholder-count="5">
+<div style="display: flex; flex-direction: column; gap: 2px">
+<sc-if value="{{pr.hasDe}}" hint-placeholder-val="{{ true }}">
+<span style="font-size: 19px; line-height: 1.35">{{pr.de}}</span>
+</sc-if>
+<span style="font-size: 18px; font-style: italic; line-height: 1.35; color: {{c.accentText}}">{{pr.la}}</span>
+<sc-if value="{{pr.hasPron}}" hint-placeholder-val="{{ false }}">
+<span style="font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 14px; line-height: 1.35; color: {{c.muted}}">{{pr.pron}}</span>
+</sc-if>
+</div>
+</sc-for>
+</div>
+</sc-if>
+
+<sc-if value="{{spalten}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column">
+<div aria-hidden="true" style="display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 14px; padding-bottom: 6px; border-bottom: 1px solid {{c.rule2}}; font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: {{c.muted}}">
+<span>Deutsch</span><span>Latein</span>
+</div>
+<sc-for list="{{p.pairs}}" as="pr" hint-placeholder-count="5">
+<div style="display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 14px; padding: 8px 0; border-bottom: 1px solid {{c.rule2}}">
+<span style="font-size: 16px; line-height: 1.35">{{pr.de}}</span>
+<span style="display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 16px; font-style: italic; line-height: 1.35; color: {{c.accentText}}">{{pr.la}}</span>
+<sc-if value="{{pr.hasPron}}" hint-placeholder-val="{{ false }}">
+<span style="font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 12px; line-height: 1.35; color: {{c.muted}}">{{pr.pron}}</span>
+</sc-if>
+</span>
+</div>
+</sc-for>
+</div>
+</sc-if>
+
+<sc-if value="{{p.hasNote}}" hint-placeholder-val="{{ false }}">
+<div style="display: flex; flex-direction: column; gap: 10px; padding: 14px 16px; background: {{c.card}}; border: 1px solid {{c.rule}}; border-radius: 10px">
+<span style="font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: {{c.muted}}">Unterschied beim Beten</span>
+<p style="margin: 0; font-size: 17px; line-height: 1.45">{{p.note1}}</p>
+<div style="display: flex; flex-direction: column; gap: 2px; padding-left: 12px; border-left: 2px solid {{c.accentFill}}">
+<span style="font-size: 17px; font-style: italic; line-height: 1.35; color: {{c.accentText}}">{{p.noteLa}}</span>
+<sc-if value="{{p.noteHasPron}}" hint-placeholder-val="{{ false }}">
+<span style="font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 13px; line-height: 1.35; color: {{c.muted}}">{{p.notePron}}</span>
+</sc-if>
+<span style="font-size: 16px; line-height: 1.35; color: {{c.muted}}">{{p.noteDe}}</span>
+</div>
+<p style="margin: 0; font-size: 17px; line-height: 1.45">{{p.note2}}</p>
+</div>
+</sc-if>
+</section>
+</sc-for>
+
+<section id="zs-geheimnisse" style="display: flex; flex-direction: column; gap: 18px; padding-top: 18px; border-top: 1px solid {{c.rule}}">
+<div style="display: flex; flex-direction: column; gap: 4px">
+<span style="font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: {{c.muted}}">In jedem Gesätz</span>
+<h2 style="margin: 0; font-size: 27px; font-weight: 600; line-height: 1.15">Die Geheimnisse</h2>
+<span style="font-size: 20px; font-style: italic; line-height: 1.2; color: {{c.accentText}}">Mysteria</span>
+<p style="margin: 6px 0 0; font-size: 17px; line-height: 1.45; color: {{c.muted}}">Links der Einschub nach „Jesus“, rechts die lateinische Ansage vor dem Gesätz.</p>
+</div>
+<sc-for list="{{myst}}" as="m" hint-placeholder-count="4">
+<div style="display: flex; flex-direction: column; gap: 8px">
+<div style="display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 2px 12px">
+<h3 style="margin: 0; font-size: 20px; font-weight: 600">{{m.de}}</h3>
+<span style="font-size: 17px; font-style: italic; color: {{c.accentText}}">{{m.la}}</span>
+</div>
+<sc-for list="{{m.items}}" as="it" hint-placeholder-count="5">
+<div style="display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 6px; padding: 8px 0; border-top: 1px solid {{c.rule2}}">
+<span style="font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 13px; font-weight: 600; color: {{c.accentText}}; padding-top: 3px">{{it.num}}</span>
+<span style="display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 17px; line-height: 1.35">{{it.de}}</span>
+<span style="font-size: 17px; font-style: italic; line-height: 1.35; color: {{c.accentText}}">{{it.la}}</span>
+<sc-if value="{{it.hasPron}}" hint-placeholder-val="{{ false }}">
+<span style="font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 13px; line-height: 1.35; color: {{c.muted}}">{{it.pron}}</span>
+</sc-if>
+</span>
+</div>
+</sc-for>
+</div>
+</sc-for>
+</section>
+
+<p style="margin: 0; font-family: 'Source Sans 3', system-ui, sans-serif; font-size: 13px; line-height: 1.45; color: {{c.muted}}">Lateinische Schreibweise mit i statt j und ausgeschriebenem ae. Beim Fatima-Gebet ist die Lesart „inferiori“ oder „inferni“ noch offen.</p>
 </div>
 </template>
 <noscript><p style="font-family:serif;padding:20px">Bitte JavaScript aktivieren, um die Rosenkranz-App zu nutzen.</p></noscript>

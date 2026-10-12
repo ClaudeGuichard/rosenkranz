@@ -273,7 +273,7 @@ var TX = {
   },
   fatima: {
     de: ['O mein Jesus,', 'verzeih uns unsere Sünden,', 'bewahre uns vor dem Feuer der Hölle,', 'führe alle Seelen in den Himmel,', 'besonders jene,', 'die deiner Barmherzigkeit am meisten bedürfen.'],
-    la: ['Dómine Jésu,', 'dimítte nóbis débita nóstra,', 'sálva nos ab ígne inferióri,', 'perdúc in caélum ómnes ánimas,', 'praesértim éas,',
+    la: ['Dómine Iésu,', 'dimítte nóbis débita nóstra,', 'sálva nos ab ígne inferióri,', 'perdúc in caélum ómnes ánimas,', 'praesértim éas,',
       'quae misericórdiae túae máxime índigent.', 'Ámen.']
   },
   salve: {
@@ -323,7 +323,7 @@ var MYST_LA = {
   gloriosa: ['Resurréctio', 'Ascénsio', 'Descénsus Spíritus Sáncti', 'Assúmptio', 'Coronátio']
 };
 var REF = {
-  gaudiosa: ['Lk 1,26-38', 'Lk 1,39-56', 'Lk 2,1-20', 'Lk 2,22-40', 'Lk 2,41-52'],
+  gaudiosa: ['Lk 1,26-38', 'Lk 1,39-56', 'Lk 2,1-20', 'Lk 2,21-40', 'Lk 2,41-52'],
   luminosa: ['Mt 3,13-17', 'Joh 2,1-11', 'Mk 1,14-15', 'Mt 17,1-9', 'Mt 26,26-29'],
   dolorosa: ['Mt 26,36-46', 'Mk 15,6-15', 'Mt 27,27-31', 'Lk 23,26-32', 'Lk 23,33-49'],
   gloriosa: ['Lk 24,1-12', 'Apg 1,6-11', 'Apg 2,1-13', 'Lk 1,46-55 · 1 Kor 15,20-26', 'Offb 12,1-6']
@@ -433,6 +433,9 @@ class Component extends DCLogic {
     var todayKey = ['gloriosa', 'gaudiosa', 'dolorosa', 'gloriosa', 'luminosa', 'dolorosa', 'gaudiosa'][now.getDay()];
     var m = (P.geheimnis && P.geheimnis !== 'heute') ? P.geheimnis : todayKey;
     var doy = Math.floor((now - new Date(now.getFullYear(), 0, 0)) / 86400000);
+    // Für die Dauer eines Gebets festhalten: um Mitternacht wechseln sonst Geheimnis und Bilder mitten im Rosenkranz
+    if (!this.__m) { this.__m = m; this.__doy = doy; }
+    m = this.__m; doy = this.__doy;
 
     var steps = buildSteps(m, mode);
     var betr = mode === 'betr';
@@ -490,6 +493,10 @@ class Component extends DCLogic {
     var beginner = mode === 'anf';
     // Gebetstext immer sichtbar; wer ohne Text beten will, nimmt den Modus Betrachtung
     var showText = true;
+    // Fortgeschritten: beim Ave nur Gebetsname und Einschub, der Wortlaut ist bekannt
+    var aveShort = mode === 'fort' && s.key === 'ave';
+    if (aveShort && s.part === 'open') mystLine = la ? (s.open === 0 ? plain(OPEN_INS.laIntro) : '') : OPEN_INS.de[s.open];
+    if (aveShort) showText = false;
     var section = s.part === 'open' ? 'Eröffnung' : (s.part === 'close' ? 'Abschluss' : (s.dec + 1) + '. Gesätz · ' + NAME_DE[m][s.dec]);
     var setTitle = { gaudiosa: 'Die freudenreichen Geheimnisse', luminosa: 'Die lichtreichen Geheimnisse', dolorosa: 'Die schmerzhaften Geheimnisse', gloriosa: 'Die glorreichen Geheimnisse' }[m];
     var key = s.part === 'dec' ? GRP[m] + '-' + (s.dec + 1) + '-' + variant : '';
@@ -522,14 +529,20 @@ class Component extends DCLogic {
       partLabel: s.part === 'open' ? 'Eröffnung' : 'Abschluss',
       setTitle: setTitle,
       kicker: kicker,
-      hasMystLine: s.part === 'dec' && s.key !== 'ansage',
+      hasMystLine: (s.part === 'dec' && s.key !== 'ansage') || (aveShort && !!mystLine),
       mystLine: mystLine, refLine: refLine,
-      showLines: !betr && (showText || s.key === 'ansage'),
-      showFlow: flow && !betr && (showText || s.key === 'ansage'),
+      showLines: !betr && showText,
+      showFlow: flow && !betr && showText,
       lineSize: longText ? '19px' : '22px',
-      showLineList: !flow && !betr && (showText || s.key === 'ansage'),
-      imgHeight: betr ? 'clamp(360px, 62vh, 640px)' : 'clamp(230px, 38vh, 380px)',
-      mystSize: betr ? '26px' : '20px',
+      showLineList: !flow && !betr && showText,
+      // Betrachtung: Geheimnis über dem Bild, damit beides ohne Scrollen sichtbar ist
+      imgOrder: betr ? 2 : 0,
+      bodyPad: betr ? '22px 20px 16px' : '18px 20px 24px',
+      // Betrachtung: Bild nimmt den ganzen freien Platz zwischen Geheimnis und Zähler ein
+      imgHeight: betr ? '0; flex: 1 1 0; min-height: 160px' : 'clamp(230px, 38vh, 380px)',
+      figFlex: betr ? '1 1 auto; min-height: 0' : 'none',
+      imgBg: betr ? 'transparent' : c.rule2,
+      mystSize: (betr || aveShort) ? '26px' : '20px',
       lines: lines,
       lineGap: (la && pronMode !== 'aus') ? '8px' : '0px',
       canToggleText: false,
@@ -557,6 +570,267 @@ class Component extends DCLogic {
 
 return Component;
 })(), []);
+DC.register('Zweisprachig', 'tpl-Zweisprachig', (function () {
+
+function pron(src, style) {
+  var ACC = '́';
+  var s = src.normalize('NFD');
+  // tokens: letters with accent flag
+  var out = '';
+  var words = s.split(/(\s+|[,.:;!?„“"]+)/);
+  for (var wi = 0; wi < words.length; wi++) {
+    var w = words[wi];
+    if (!/[A-Za-z]/.test(w)) { out += w; continue; }
+    var L = [];
+    for (var i = 0; i < w.length; i++) {
+      var ch = w[i];
+      if (ch === ACC) { if (L.length) L[L.length - 1].acc = true; continue; }
+      if (ch === '\u0308') { if (L.length) L[L.length - 1].hi = true; continue; }
+      L.push({ c: ch.toLowerCase(), up: ch !== ch.toLowerCase(), acc: false });
+    }
+    var cap = L.length && L[0].up;
+    var r = '';
+    var isV = function (x) { return x && 'aeiouy'.indexOf(x.c) >= 0; };
+    var front = function (k) { var x = L[k], y = L[k + 1]; if (!x) return false; if ('eiy'.indexOf(x.c) >= 0) return true; if ((x.c === 'a' || x.c === 'o') && y && y.c === 'e') return true; return false; };
+    var a = function (txt, acc) { if (!acc) return txt; var m = txt.match(/[aeiouyäöü](?!.*[aeiouyäöü])/); if (!m) return txt + ACC; var p = txt.lastIndexOf(m[0]); return txt.slice(0, p + 1) + ACC + txt.slice(p + 1); };
+    for (var k = 0; k < L.length; k++) {
+      var x = L[k], n = L[k + 1], p = L[k - 1], c = x.c;
+      if (c === 'c' && n && n.c === 'h') { r += 'k'; k++; continue; }
+      if (c === 'p' && n && n.c === 'h') { r += 'f'; k++; continue; }
+      if (c === 't' && n && n.c === 'h') { r += 't'; k++; continue; }
+      if (c === 'h') { if (style === 'de') r += 'h'; continue; }
+      if (c === 'q' && n && n.c === 'u') { r += 'kw'; k++; continue; }
+      if (c === 'g' && n && n.c === 'n' && style === 'ro') { r += 'nj'; k++; continue; }
+      if (c === 's' && n && n.c === 'c' && front(k + 2)) { r += (style === 'ro' ? 'sch' : 'sz'); k++; continue; }
+      if (c === 'c' && n && n.c === 'c' && front(k + 2)) { r += (style === 'ro' ? 'ttsch' : 'kz'); k++; continue; }
+      if (c === 'c') { r += front(k + 1) ? (style === 'ro' ? 'tsch' : 'z') : 'k'; continue; }
+      if (c === 'g' && style === 'ro' && front(k + 1)) { r += (p && p.c === 'g') ? 'dsch' : 'dsch'; if (p && p.c === 'g') r = r.slice(0, -5) + 'ddsch'; continue; }
+      if (c === 't' && n && n.c === 'i' && isV(L[k + 2]) && !(p && 'stx'.indexOf(p.c) >= 0)) { r += (style === 'ro' ? 'ts' : 'z'); continue; }
+      if ((c === 'a' || c === 'o') && n && n.c === 'e' && !n.hi) { r += a(style === 'ro' ? 'e' : (c === 'a' ? 'ä' : 'ö'), x.acc || n.acc); k++; continue; }
+      if (c === 'e' && k === 0 && n && n.c === 'u') { r += a('e', x.acc) + '·' + a('u', n.acc); k++; continue; }
+      if ((c === 'i' || c === 'j') && ((k === 0 && isV(n)) || (isV(p) && isV(n)))) { r += 'j'; continue; }
+      if (c === 'j') { r += 'j'; continue; }
+      if (c === 'v') { r += 'w'; continue; }
+      if (c === 'x') { r += (style === 'ro' ? 'ks' : 'x'); continue; }
+      if (c === 'z') { r += (style === 'ro' ? 'ds' : 'z'); continue; }
+      if (c === 'y') { r += a(style === 'ro' ? 'i' : 'ü', x.acc); continue; }
+      r += a(c, x.acc);
+    }
+    r = r.normalize('NFC');
+    if (cap) r = r.charAt(0).toUpperCase() + r.slice(1);
+    out += r;
+  }
+  return out;
+}
+function plain(src) { return src.normalize('NFD').replace(/[́̈]/g, '').normalize('NFC'); }
+// Gebetstexte. Latein mit Betonungszeichen (werden zur Anzeige entfernt, für die Aussprachehilfe genutzt).
+
+// Gebete zweisprachig: jedes Paar ist eine Sinneinheit [Deutsch, Latein].
+// Latein mit Betonungszeichen (für die Aussprachehilfe); angezeigt wird ohne Zeichen.
+var PRAYERS = [
+  { id: 'kreuz', de: 'Kreuzzeichen', la: 'Signum Crucis', where: 'Am Anfang, mit dem Kreuz in der Hand',
+    pairs: [
+      ['Im Namen des Vaters', 'In nómine Pátris,'],
+      ['und des Sohnes', 'et Fílii,'],
+      ['und des Heiligen Geistes.', 'et Spíritus Sáncti.'],
+      ['Amen.', 'Ámen.']
+    ] },
+  { id: 'credo', de: 'Glaubensbekenntnis', la: 'Symbolum Apostolorum', where: 'Am Kreuz',
+    pairs: [
+      ['Ich glaube an Gott, den Vater, den Allmächtigen,', 'Crédo in Déum Pátrem omnipoténtem,'],
+      ['den Schöpfer des Himmels und der Erde,', 'Creatórem caéli et térrae.'],
+      ['und an Jesus Christus, seinen eingeborenen Sohn, unsern Herrn,', 'Et in Iésum Chrístum, Fílium éius únicum, Dóminum nóstrum,'],
+      ['empfangen durch den Heiligen Geist,', 'qui concéptus est de Spíritu Sáncto,'],
+      ['geboren von der Jungfrau Maria,', 'nátus ex María Vírgine,'],
+      ['gelitten unter Pontius Pilatus,', 'pássus sub Póntio Piláto,'],
+      ['gekreuzigt, gestorben und begraben,', 'crucifíxus, mórtuus, et sepúltus,'],
+      ['hinabgestiegen in das Reich des Todes,', 'descéndit ad ínferos,'],
+      ['am dritten Tage auferstanden von den Toten,', 'tértia díe resurréxit a mórtuis,'],
+      ['aufgefahren in den Himmel;', 'ascéndit ad caélos,'],
+      ['er sitzt zur Rechten Gottes, des allmächtigen Vaters;', 'sédet ad déxteram Déi Pátris omnipoténtis,'],
+      ['von dort wird er kommen, zu richten die Lebenden und die Toten.', 'índe ventúrus est iudicáre vívos et mórtuos.'],
+      ['Ich glaube an den Heiligen Geist,', 'Crédo in Spíritum Sánctum,'],
+      ['die heilige katholische Kirche,', 'sánctam Ecclésiam cathólicam,'],
+      ['Gemeinschaft der Heiligen,', 'sanctórum communiónem,'],
+      ['Vergebung der Sünden,', 'remissiónem peccatórum,'],
+      ['Auferstehung der Toten', 'cárnis resurrectiónem,'],
+      ['und das ewige Leben.', 'vítam aetérnam.'],
+      ['Amen.', 'Ámen.']
+    ] },
+  { id: 'pater', de: 'Vaterunser', la: 'Pater Noster', where: 'An jeder großen Perle',
+    pairs: [
+      ['Vater unser im Himmel,', 'Páter Nóster, qui es in caélis,'],
+      ['geheiligt werde dein Name.', 'sanctificétur nómen túum.'],
+      ['Dein Reich komme.', 'Advéniat régnum túum.'],
+      ['Dein Wille geschehe,', 'Fíat volúntas túa,'],
+      ['wie im Himmel so auf Erden.', 'sícut in caélo, et in térra.'],
+      ['Unser tägliches Brot gib uns heute.', 'Pánem nóstrum quotidiánum da nóbis hódie.'],
+      ['Und vergib uns unsere Schuld,', 'Et dimítte nóbis débita nóstra,'],
+      ['wie auch wir vergeben unsern Schuldigern.', 'sícut et nos dimíttimus debitóribus nóstris.'],
+      ['Und führe uns nicht in Versuchung,', 'Et ne nos indúcas in tentatiónem:'],
+      ['sondern erlöse uns von dem Bösen.', 'sed líbera nos a málo.'],
+      ['Amen.', 'Ámen.']
+    ] },
+  { id: 'ave', de: 'Ave Maria', la: 'Ave Maria', where: 'An jeder kleinen Perle',
+    pairs: [
+      ['Gegrüßet seist du, Maria, voll der Gnade,', 'Áve María, grátia pléna,'],
+      ['der Herr ist mit dir.', 'Dóminus técum.'],
+      ['Du bist gebenedeit unter den Frauen,', 'Benedícta tu in muliéribus,'],
+      ['und gebenedeit ist die Frucht deines Leibes, Jesus.', 'et benedíctus frúctus véntris túi, Iésus.'],
+      ['Heilige Maria, Mutter Gottes,', 'Sáncta María, Máter Déi,'],
+      ['bitte für uns Sünder', 'óra pro nóbis peccatóribus,'],
+      ['jetzt und in der Stunde unseres Todes.', 'nunc, et in hóra mórtis nóstrae.'],
+      ['Amen.', 'Ámen.']
+    ],
+    note: [
+      'Eröffnung: Auf Deutsch folgt nach „Jesus“ je eine Bitte: „der in uns den Glauben vermehre“, „der in uns die Hoffnung stärke“, „der in uns die Liebe entzünde“. Auf Latein wird stattdessen vor den drei Ave die Meinung gesprochen:',
+      'Gesätze: Auf Deutsch wird das Geheimnis in jedes Ave nach „Jesus“ eingefügt. Auf Latein wird es einmal vor dem Gesätz angesagt.'
+    ],
+    noteLa: ['Ad augméntum fídei, spéi et caritátis.', 'Zur Mehrung von Glaube, Hoffnung und Liebe.'] },
+  { id: 'gloria', de: 'Ehre sei dem Vater', la: 'Gloria Patri', where: 'Nach dem zehnten Ave',
+    pairs: [
+      ['Ehre sei dem Vater', 'Glória Pátri,'],
+      ['und dem Sohn', 'et Fílio,'],
+      ['und dem Heiligen Geist,', 'et Spirítui Sáncto.'],
+      ['wie im Anfang,', 'Sícut érat in princípio,'],
+      ['so auch jetzt', 'et nunc,'],
+      ['und alle Zeit', 'et sémper,'],
+      ['und in Ewigkeit.', 'et in saécula saeculórum.'],
+      ['Amen.', 'Ámen.']
+    ] },
+  { id: 'fatima', de: 'Fatima-Gebet', la: 'Domine Iesu', where: 'Nach dem Ehre sei dem Vater',
+    pairs: [
+      ['O mein Jesus,', 'Dómine Iésu,'],
+      ['verzeih uns unsere Sünden,', 'dimítte nóbis débita nóstra,'],
+      ['bewahre uns vor dem Feuer der Hölle,', 'sálva nos ab ígne inferióri,'],
+      ['führe alle Seelen in den Himmel,', 'perdúc in caélum ómnes ánimas,'],
+      ['besonders jene,', 'praesértim éas,'],
+      ['die deiner Barmherzigkeit am meisten bedürfen.', 'quae misericórdiae túae máxime índigent.'],
+      ['', 'Ámen.']
+    ] },
+  { id: 'salve', de: 'Salve Regina', la: 'Salve Regina', where: 'Zum Abschluss',
+    pairs: [
+      ['Sei gegrüßt, o Königin, Mutter der Barmherzigkeit,', 'Sálve, Regína, máter misericórdiae,'],
+      ['unser Leben, unsre Wonne und unsre Hoffnung, sei gegrüßt!', 'víta, dulcédo, et spes nóstra, sálve.'],
+      ['Zu dir rufen wir verbannte Kinder Evas;', 'Ad te clamámus, éxsules fílii Hévae.'],
+      ['zu dir seufzen wir trauernd und weinend in diesem Tal der Tränen.', 'Ad te suspirámus, geméntes et fléntes in hac lacrimárum válle.'],
+      ['Wohlan denn, unsre Fürsprecherin,', 'Éia, érgo, advocáta nóstra,'],
+      ['wende deine barmherzigen Augen uns zu,', 'íllos túos misericórdes óculos ad nos convérte.'],
+      ['und nach diesem Elend zeige uns Jesus, die gebenedeite Frucht deines Leibes!', 'Et Iésum, benedíctum frúctum véntris túi, nóbis post hoc exsílium osténde.'],
+      ['O gütige, o milde, o süße Jungfrau Maria.', 'O clémens, o pía, o dúlcis Vírgo María.']
+    ] },
+  { id: 'michael', de: 'Gebet zum hl. Michael', la: 'Sancte Michael', where: 'Zum Abschluss',
+    pairs: [
+      ['Heiliger Erzengel Michael, verteidige uns im Kampfe!', 'Sáncte Míchaël Archángele, defénde nos in proélio,'],
+      ['Gegen die Bosheit und die Nachstellungen des Teufels sei unser Schutz.', 'cóntra nequítiam et insídias diáboli ésto praesídium.'],
+      ['„Gebiete ihm, o Gott!“, so bitten wir flehentlich;', 'Ímperet ílli Déus, súpplices deprecámur:'],
+      ['du aber, Fürst der himmlischen Heerscharen,', 'túque, prínceps milítiae caeléstis,'],
+      ['stoße den Satan und die anderen bösen Geister,', 'Sátanam aliósque spíritus malígnos,'],
+      ['die zum Verderben der Seelen die Welt durchziehen,', 'qui ad perditiónem animárum pervagántur in múndo,'],
+      ['mit der Kraft Gottes in die Hölle.', 'divína virtúte, in inférnum detrúde.'],
+      ['Amen.', 'Ámen.']
+    ] }
+];
+
+// Geheimnisse: deutscher Einschub nach „Jesus“ und lateinische Ansage
+var MYST = [
+  { de: 'Die freudenreichen Geheimnisse', la: 'Mystéria gaudiósa', items: [
+    ['den du, o Jungfrau, vom Heiligen Geist empfangen hast', 'Annuntiátio'],
+    ['den du, o Jungfrau, zu Elisabet getragen hast', 'Visitátio'],
+    ['den du, o Jungfrau, geboren hast', 'Natívitas'],
+    ['den du, o Jungfrau, im Tempel aufgeopfert hast', 'Praesentátio'],
+    ['den du, o Jungfrau, im Tempel wiedergefunden hast', 'Invéntio in Témplo']] },
+  { de: 'Die lichtreichen Geheimnisse', la: 'Mystéria luminósa', items: [
+    ['der von Johannes getauft worden ist', 'Baptísma ápud Iordánem'],
+    ['der sich bei der Hochzeit in Kana offenbart hat', 'Autorevelátio ápud Canénse Matrimónium'],
+    ['der uns das Reich Gottes verkündet hat', 'Régni Déi Proclamátio'],
+    ['der auf dem Berg verklärt worden ist', 'Transfigurátio'],
+    ['der uns die Eucharistie geschenkt hat', 'Eucharístiae Institútio']] },
+  { de: 'Die schmerzhaften Geheimnisse', la: 'Mystéria dolorósa', items: [
+    ['der für uns Blut geschwitzt hat', 'Cruciátus in Hórto'],
+    ['der für uns gegeißelt worden ist', 'Flagellátio'],
+    ['der für uns mit Dornen gekrönt worden ist', 'Coronátio cum Spínis'],
+    ['der für uns das schwere Kreuz getragen hat', 'Baiulátio Crúcis'],
+    ['der für uns gekreuzigt worden ist', 'Crucifíxio']] },
+  { de: 'Die glorreichen Geheimnisse', la: 'Mystéria gloriósa', items: [
+    ['der von den Toten auferstanden ist', 'Resurréctio'],
+    ['der in den Himmel aufgefahren ist', 'Ascénsio'],
+    ['der uns den Heiligen Geist gesandt hat', 'Descénsus Spíritus Sáncti'],
+    ['der dich, o Jungfrau, in den Himmel aufgenommen hat', 'Assúmptio'],
+    ['der dich, o Jungfrau, im Himmel gekrönt hat', 'Coronátio']] }
+];
+var NUM = ['I', 'II', 'III', 'IV', 'V'];
+
+class Component extends DCLogic {
+  renderVals() {
+    var S = this.state || {};
+    var P = this.props;
+    var self = this;
+    var view = S.view || (P.ansicht ?? 'zeilen');
+    var pronOn = S.pron !== undefined ? S.pron : (P.aussprache === true || P.aussprache === 'true');
+    var pronStyle = S.pronStyle || (P.ausspracheStil ?? 'ro');
+    var themePref = P.erscheinungsbild ?? 'hell';
+    var sysDark = false;
+    try { sysDark = !!(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches); } catch (e) {}
+    var dark = themePref === 'dunkel' || (themePref === 'system' && sysDark);
+    var c = dark
+      ? { paper: '#171512', card: '#221F1B', ink: '#EDE7DC', muted: '#A9A194', rule: '#3B362F', rule2: '#2E2A25', trackOff: '#5A544B', accentText: '#E8907F', accentFill: '#A8352A' }
+      : { paper: '#F8F6F1', card: '#FFFFFF', ink: '#1D1B18', muted: '#5E5850', rule: '#DDD6CA', rule2: '#EAE4DA', trackOff: '#B8AFA2', accentText: '#9E2A20', accentFill: '#9E2A20' };
+    var seg = function (opts, cur, key) {
+      return opts.map(function (o) {
+        var on = o[0] === cur;
+        return { label: o[1], pressed: on ? 'true' : 'false', bg: on ? c.ink : c.card, fg: on ? c.paper : c.ink, pick: function () { var u = {}; u[key] = o[0]; self.setState(u); } };
+      });
+    };
+    var laLine = function (raw) { return { la: plain(raw), hasPron: pronOn && !!raw, pron: pronOn && raw ? pron(raw, pronStyle) : '' }; };
+
+    var prayers = PRAYERS.map(function (p) {
+      var pairs = p.pairs.map(function (pr) {
+        var l = laLine(pr[1]);
+        return { de: pr[0], hasDe: !!pr[0], la: l.la, hasPron: l.hasPron, pron: l.pron };
+      });
+      var n = p.noteLa ? laLine(p.noteLa[0]) : null;
+      return {
+        anchor: 'zs-' + p.id, de: p.de, la: p.la, where: p.where, pairs: pairs,
+        hasNote: !!p.note, note1: p.note ? p.note[0] : '', note2: p.note ? p.note[1] : '',
+        noteLa: n ? n.la : '', noteHasPron: n ? n.hasPron : false, notePron: n ? n.pron : '', noteDe: p.noteLa ? p.noteLa[1] : ''
+      };
+    });
+    var myst = MYST.map(function (g) {
+      return { de: g.de, la: plain(g.la), items: g.items.map(function (it, i) {
+        var l = laLine(it[1]);
+        return { num: NUM[i], de: 'Jesus, ' + it[0], la: l.la, hasPron: l.hasPron, pron: l.pron };
+      }) };
+    });
+    // Sprungmarken scrollen nur, statt die Adresse zu ändern (die Web-App nutzt #… für ihre Seiten)
+    var jump = function (id) { return function () { try { var el = document.getElementById(id); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' }); } catch (e) {} }; };
+    var chips = PRAYERS.map(function (p) { return { go: jump('zs-' + p.id), label: p.de }; });
+    chips.push({ go: jump('zs-geheimnisse'), label: 'Geheimnisse' });
+    var hasClose = typeof P.onClose === 'function';
+
+    return {
+      c: c,
+      rootW: P.vollbild ? '100%' : '390px',
+      rootMinH: P.vollbild ? '100%' : '844px',
+      hasClose: hasClose, noClose: !hasClose,
+      close: function () { if (hasClose) P.onClose(); },
+      views: seg([['zeilen', 'Zeile für Zeile'], ['spalten', 'Nebeneinander']], view, 'view'),
+      zeilen: view === 'zeilen', spalten: view === 'spalten',
+      pronOn: pronOn,
+      pronChecked: pronOn ? 'true' : 'false',
+      pronTrack: pronOn ? c.accentFill : c.trackOff,
+      pronJustify: pronOn ? 'flex-end' : 'flex-start',
+      togglePron: function () { self.setState({ pron: !pronOn }); },
+      styles: seg([['ro', 'Römisch'], ['de', 'Deutsch']], pronStyle, 'pronStyle'),
+      chips: chips,
+      prayers: prayers,
+      myst: myst
+    };
+  }
+}
+
+return Component;
+})(), ["view", "pron", "pronStyle"]);
 DC.register('Main', 'tpl-Main', (function () {
 var RK_NAV = window.RK_NAV = {
   main: null,
@@ -573,10 +847,11 @@ var RK_NAV = window.RK_NAV = {
   sync: function () {
     var m = this.main; if (!m) return;
     var h = location.hash, S = m.state || {};
-    var wantPrayer = h === '#gebet', wantCal = h === '#kalender', wantLegal = h === '#impressum';
-    if (!wantPrayer && !wantCal && !wantLegal) this.pushed = false;
+    var wantPrayer = h === '#gebet', wantCal = h === '#kalender', wantLegal = h === '#impressum', wantBi = h === '#gebete';
+    if (!wantPrayer && !wantCal && !wantLegal && !wantBi) this.pushed = false;
     var u = {};
     if (!!S.legal !== wantLegal) u.legal = wantLegal;
+    if (!!S.bilingual !== wantBi) u.bilingual = wantBi;
     if (!!S.prayer !== wantPrayer) u.prayer = wantPrayer;
     if (!!S.calOpen !== wantCal) { u.calOpen = wantCal; if (wantCal) u.calMonth = new Date().getMonth(); }
     if (Object.keys(u).length) m.setState(u);
@@ -1051,6 +1326,10 @@ class Component extends DCLogic {
         'Tippe oben rechts auf die drei Punkte (⋮).',
         'Tippe auf „App installieren“ oder „Zum Startbildschirm hinzufügen“ und bestätige.'
       ], offlineText: window.__rkOfflineText || '', hasOffline: !!window.__rkOfflineText,
+      bilingualOpen: !this.props.season && !!S.bilingual,
+      openBilingual: function () { RK_NAV.go('gebete'); self.setState({ bilingual: true }); },
+      closeBilingual: function () { RK_NAV.leave('gebete'); self.setState({ bilingual: false }); },
+      bilingualPron: langSel === 'la+',
       heroLabel: sel === todayKey ? t.today : t.selected,
       hasSetNote: sel === 'luminosa',
       setNote: 'Die lichtreichen Geheimnisse nach Johannes Paul II., Rosarium Virginis Mariae, Nr. 21.',
